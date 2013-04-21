@@ -8,7 +8,6 @@ License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Integrates your Quickpay payment getway into your WooCommerce installation.
-/Users/pjtp/Desktop/Projekter/Quickpay/wooquickpay/README.txt
 
 == Description ==
 With WooQuickpay, you are able to integrate your Quickpay gateway to your WooCommerce install. With a wide list of API features including secure capturing, refunding and cancelling payments directly from your WooCommerce order overview. This is only a part of the many features found in this plugin.
