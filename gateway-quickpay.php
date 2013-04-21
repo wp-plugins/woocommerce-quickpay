@@ -4,7 +4,7 @@ Plugin Name: WooQuickpay
 Plugin URI: https://bitbucket.org/perfectsolution/woocommerce-quickpay/src
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
 Version: 2.0.3
-Author: Patrick Pedersen
+Author: Perfect Solution
 Author URI: http://perfect-solution.dk
 */
 
