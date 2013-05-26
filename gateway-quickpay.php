@@ -2,8 +2,8 @@
 /*
 Plugin Name: WooQuickpay
 Plugin URI: https://bitbucket.org/perfectsolution/woocommerce-quickpay/src
-Description: Integrates your Quickpay payment gateway into your WooCommerce installation.
-Version: 2.0.3
+Description: Integrates your Quickpay payment getway into your WooCommerce installation.
+Version: 2.0.4
 Author: Perfect Solution
 Author URI: http://perfect-solution.dk
 */
@@ -402,8 +402,13 @@ function init_quickpay_gateway() {
 			if($response) {
 				// Fetch order number;
 				preg_match('/\d{4,}$/', $response->ordernumber, $order_number);
-				$order_number = end($order_number);
+				$order_number = (int) end($order_number);
+
+				$test = $response->order_number;
+				$test1 = $order_number;
+
 				$order_number = $this->find_order_by_order_number($order_number);
+
 				$this->order = new WC_Order($order_number);
 
 				// Update post meta
