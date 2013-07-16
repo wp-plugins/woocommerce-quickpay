@@ -3,7 +3,7 @@
 Plugin Name: WooQuickpay
 Plugin URI: https://bitbucket.org/perfectsolution/woocommerce-quickpay/src
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 2.0.4
+Version: 2.0.5
 Author: Perfect Solution
 Author URI: http://perfect-solution.dk
 */
@@ -32,8 +32,8 @@ function init_quickpay_gateway() {
 		    $this->icon 			= '';
 		    $this->has_fields 		= false;	
 
-		    $this->supports = array( 'subscriptions', 'products', 'subscription_cancellation', 'subscription_reactivation', 'subscription_suspension' );
-			
+		    $this->supports = array( 'subscriptions', 'products', 'subscription_cancellation', 'subscription_reactivation', 'subscription_suspension' , 'subscription_amount_changes', 'subscription_date_changes');
+
 			// Load the form fields and settings
 			$this->init_form_fields();
 			$this->init_settings();
@@ -59,7 +59,7 @@ function init_quickpay_gateway() {
 		    // Actions
 		    add_action('woocommerce_api_wc_quickpay', array($this, 'check_quickpay_response'));    
 			add_action('quickpay-approved', array($this, 'process_complete'));
-		    add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );	    
+		    add_action('woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );	    
 		    add_action('woocommerce_receipt_quickpay', array($this, 'receipt_page'));
 		    add_action('shutdown', array($this, 'shutdown'));
 		}
@@ -161,16 +161,17 @@ function init_quickpay_gateway() {
 			}
 		}
 
-		private function api_action_recurring() {
+		private function api_action_recurring($amount = NULL) {
 			$response = WC_Quickpay_API::request($this->set_request_params('recurring', array(
 				'ordernumber' => time().'qp'.$this->get_order_number(), 
-				'amount' => $this->format_price( WC_Subscriptions_Order::get_price_per_period( $this->order ) ),
+				'amount' => $this->format_price( isset($amount) ? $amount : WC_Subscriptions_Order::get_price_per_period( $this->order ) ),
 				'currency' => $this->gateway->currency,
 				'autocapture' => 1
 			)));
 
 			if( ! is_wp_error($response)) {
 				$this->note('Recurring payment captured.');
+				return TRUE;
 			}
 		}
 
@@ -411,6 +412,8 @@ function init_quickpay_gateway() {
 
 				$this->order = new WC_Order($order_number);
 
+$this->note($test . ' - ' . $test1);
+
 				// Update post meta
 				update_post_meta( $this->order->id, 'TRANSACTION_ID', esc_attr($response->transaction) );
 
@@ -419,17 +422,24 @@ function init_quickpay_gateway() {
 
 				if(WC_Quickpay_API::validate_response($response, $this->settings['quickpay_md5secret'])) {
 					if($subscription) {
-						if($this->order->status === 'completed') {
-							$order_note = 'Subscription payment captured.';
-						} else {
-							$this->order->update_status('completed');
+						if($this->order->status !== 'completed') {
+							//$this->order->update_status('completed');
 							$this->order->reduce_order_stock();
 							$order_note = 'Subscription sign up completed.';
 						}
-						if($this->api_action_recurring()) {
-							$this->order->add_order_note($order_note);
-							WC_Subscriptions_Manager::process_subscription_payments_on_order( $this->order->id, $product_id );
-						}	
+
+						// Calculates the total amount to be charged at the outset of the Subscription taking into account sign-up fees, 
+						// per period price and trial period, if any.
+						$subscription_initial_payment = WC_Subscriptions_Order::get_total_initial_payment( $this->order );
+
+						// Only make an instant payment if there is an initial payment
+						if($subscription_initial_payment > 0 ) {
+							
+							if($this->api_action_recurring()) {
+								WC_Subscriptions_Manager::process_subscription_payments_on_order( $this->order, $product_id );
+							}
+						}
+
 					} else {
 						$this->order->update_status('processing');
 						$this->order->reduce_order_stock();
@@ -732,12 +742,14 @@ function init_quickpay_gateway() {
 		}
 
 		private function subscr_is_active() {
-			if( ! function_exists(is_plugin_active)) {
-				include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-			}
-			if(is_plugin_active('woocommerce-subscriptions/woocommerce-subscriptions.php')) {
+			if( ! function_exists('is_plugin_active')) {
+ 				include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+ 			}
+
+ 			if(is_plugin_active('woocommerce-subscriptions/woocommerce-subscriptions.php')) {
 				return true;
 			} 
+
 			return false;
 		}
 
@@ -841,6 +853,7 @@ function init_quickpay_gateway() {
 	}
 
 	add_filter('woocommerce_payment_gateways', 'add_quickpay_gateway' );
+
 	if(is_admin()) {
 		$WC_Quickpay = new WC_Quickpay();
 		add_filter('manage_shop_order_posts_custom_column',array($WC_Quickpay, 'add_custom_order_data'));	

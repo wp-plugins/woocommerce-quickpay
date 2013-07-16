@@ -3,7 +3,7 @@ Contributors: PerfectSolution
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration
 Requires at least: 3.5.0
 Tested up to: 3.5.1
-Stable tag: 2.0.4
+Stable tag: 2.0.5
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,11 @@ With WooQuickpay, you are able to integrate your Quickpay gateway to your WooCom
 6. You are good to go.
 
 == Changelog ==
+
+= 2.0.5 =
+* Fixed constant error in WC_Quickpay::subscr_is_active()
+* Improved subscription handling to support free trials and startup fees.
+* Fixed bug causing intermittent problems with double capture of subscription payments.
 
 = 2.0.4 =
 * Implemented a tweak to the "WooCommerce Sequential Order Numbers"-support which should fix any problems with WooQuickpay + Sequential order numbers.
