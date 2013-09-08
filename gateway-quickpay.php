@@ -3,7 +3,7 @@
 Plugin Name: WooQuickpay
 Plugin URI: https://bitbucket.org/perfectsolution/woocommerce-quickpay/src
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 2.0.5
+Version: 2.0.6
 Author: Perfect Solution
 Author URI: http://perfect-solution.dk
 */
@@ -61,7 +61,14 @@ function init_quickpay_gateway() {
 			add_action('quickpay-approved', array($this, 'process_complete'));
 		    add_action('woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );	    
 		    add_action('woocommerce_receipt_quickpay', array($this, 'receipt_page'));
+		    add_action('scheduled_subscription_payment_quickpay', array($this, 'scheduled_subscription_payment'), 10, 3);
 		    add_action('shutdown', array($this, 'shutdown'));
+
+			add_filter('manage_shop_order_posts_custom_column',array($this, 'add_custom_order_data'));	
+		 	add_action('wp_before_admin_bar_render', array($this, 'api_check_action'));
+		    add_action('add_meta_boxes', array($this, 'quickpay_meta_boxes'));
+		    add_action('woocommerce_order_status_completed', array($this, 'api_capture_on_order_status_complete'));
+		    add_action('admin_menu', array($this, 'js_enqueue'));
 		}
 
 		// This check is runned every time a page request is made
@@ -108,7 +115,9 @@ function init_quickpay_gateway() {
 		}
 
 		private function api_action_router( $order_id, $action ) {
-			$this->order = new WC_Order( $order_id );
+			if( ! isset($this->order))
+				$this->order = new WC_Order( $order_id );
+
 			if(in_array($action, $this->allowed_actions)) {
 				call_user_func(array($this, 'api_action_' . $action));
 			}	
@@ -172,6 +181,9 @@ function init_quickpay_gateway() {
 			if( ! is_wp_error($response)) {
 				$this->note('Recurring payment captured.');
 				return TRUE;
+			} else {
+				$this->note('Recurring payment failed.');
+				return FALSE;
 			}
 		}
 
@@ -271,7 +283,8 @@ function init_quickpay_gateway() {
 		}
 	
 		public function process_payment( $order_id ) {	
-			$this->order = new WC_Order( $order_id );
+			if( ! isset($this->order))
+				$this->order = new WC_Order( $order_id );
 
 			$gwType = NULL;
 
@@ -288,7 +301,10 @@ function init_quickpay_gateway() {
 
 		public function scheduled_subscription_payment($amount_to_charge, $order, $product_id) {
 			$this->order = $order;
-			$this->api_action_recurring();
+			
+			if( $this->api_action_recurring( $amount_to_charge ) ) {
+				WC_Subscriptions_Manager::process_subscription_payments_on_order( $this->order->id );
+			}
 		}
 
 		private function generate_quickpay_button( $order_id ) {
@@ -353,8 +369,10 @@ function init_quickpay_gateway() {
 		}
 
 		public function on_order_cancellation($order_id) {
-			global $woocommerce;	
-			$this->order = new WC_Order( $order_id );
+			global $woocommerce;
+
+			if( ! isset($this->order))	
+				$this->order = new WC_Order( $order_id );
 
 			// Redirect the customer to account page if the current order is failed
 			if($this->order->status == 'failed') {
@@ -405,14 +423,9 @@ function init_quickpay_gateway() {
 				preg_match('/\d{4,}$/', $response->ordernumber, $order_number);
 				$order_number = (int) end($order_number);
 
-				$test = $response->order_number;
-				$test1 = $order_number;
-
 				$order_number = $this->find_order_by_order_number($order_number);
 
 				$this->order = new WC_Order($order_number);
-
-$this->note($test . ' - ' . $test1);
 
 				// Update post meta
 				update_post_meta( $this->order->id, 'TRANSACTION_ID', esc_attr($response->transaction) );
@@ -422,23 +435,20 @@ $this->note($test . ' - ' . $test1);
 
 				if(WC_Quickpay_API::validate_response($response, $this->settings['quickpay_md5secret'])) {
 					if($subscription) {
-						if($this->order->status !== 'completed') {
-							//$this->order->update_status('completed');
-							$this->order->reduce_order_stock();
-							$order_note = 'Subscription sign up completed.';
-						}
-
 						// Calculates the total amount to be charged at the outset of the Subscription taking into account sign-up fees, 
 						// per period price and trial period, if any.
 						$subscription_initial_payment = WC_Subscriptions_Order::get_total_initial_payment( $this->order );
 
-						// Only make an instant payment if there is an initial payment
-						if($subscription_initial_payment > 0 ) {
-							
-							if($this->api_action_recurring()) {
-								WC_Subscriptions_Manager::process_subscription_payments_on_order( $this->order, $product_id );
-							}
-						}
+						if($this->order->status !== 'completed') {
+							$this->order->update_status('completed');
+
+							// Only make an instant payment if there is an initial payment
+							if($subscription_initial_payment > 0 AND $response->msgtype === 'subscribe')				
+								$this->api_action_recurring();
+						}	
+						
+						if($response->msgtype === 'subscribe') 
+							WC_Subscriptions_Manager::activate_subscriptions_for_order( $this->order );					
 
 					} else {
 						$this->order->update_status('processing');
@@ -825,6 +835,7 @@ $this->note($test . ' - ' . $test1);
 		}
 
 		public function request($params) {
+			$params_string = '';
 			foreach($params as $key=>$value) {
 				$params_string .= $key .'='.$value.'&';
 			}
@@ -852,18 +863,7 @@ $this->note($test . ' - ' . $test1);
 		}
 	}
 
-	add_filter('woocommerce_payment_gateways', 'add_quickpay_gateway' );
-
-	if(is_admin()) {
-		$WC_Quickpay = new WC_Quickpay();
-		add_filter('manage_shop_order_posts_custom_column',array($WC_Quickpay, 'add_custom_order_data'));	
-	 	add_action('wp_before_admin_bar_render', array($WC_Quickpay, 'api_check_action'));
-	    add_action('add_meta_boxes', array($WC_Quickpay, 'quickpay_meta_boxes'));
-	    add_action('scheduled_subscription_payment_quickpay', array($WC_Quickpay, 'scheduled_subscription_payment'), 10, 3);
-	    add_action('woocommerce_order_status_completed', array($WC_Quickpay, 'api_capture_on_order_status_complete'));
-	    add_action('admin_menu', array($WC_Quickpay, 'js_enqueue'));
-	}
-	
+	add_filter('woocommerce_payment_gateways', 'add_quickpay_gateway' );	
 }
 
 ?>
