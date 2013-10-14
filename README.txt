@@ -2,8 +2,8 @@
 Contributors: PerfectSolution
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration
 Requires at least: 3.5.0
-Tested up to: 3.5.1
-Stable tag: 2.0.6
+Tested up to: 3.6.1
+Stable tag: 2.0.7
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,12 @@ With WooQuickpay, you are able to integrate your Quickpay gateway to your WooCom
 6. You are good to go.
 
 == Changelog ==
+
+= 2.0.7 =
+* Fixed bug where server complains about Quickpay SSL certificate.
+* Changed iBill labels to viaBill
+* Added the possibility to set a custom text on the checkout page right before the customer is redirected to the Quickpay payment window.
+* Added the possibility to set a custom label to credit card and viaBill.
 
 = 2.0.6 =
 * Fixed bug where recurring payments were not being captured properly.

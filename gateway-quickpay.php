@@ -3,7 +3,7 @@
 Plugin Name: WooQuickpay
 Plugin URI: https://bitbucket.org/perfectsolution/woocommerce-quickpay/src
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 2.0.6
+Version: 2.0.7
 Author: Perfect Solution
 Author URI: http://perfect-solution.dk
 */
@@ -270,9 +270,11 @@ function init_quickpay_gateway() {
 			if ($this->description) echo wpautop(wptexturize($this->description));
 
 			if($this->gateway->ibillOrCreditcard === 'yes') {
+				$labelViaBill = ( ! empty($this->settings['quickpay_labelViaBill'])) ? $this->settings['quickpay_labelViaBill'] : 'viaBill';
+				$labelCreditCard = ( ! empty($this->settings['quickpay_labelCreditCard'])) ? $this->settings['quickpay_labelCreditCard'] : 'Credit card';
 				echo '<ul style="list-style:none;">';
-				echo '<li><input style="margin:0;" type="radio" name="quickpay-gwType" value="creditcard" checked/> Credit card</li>';
-				echo '<li><input style="margin:0;" type="radio" name="quickpay-gwType" value="iBill" /> iBill</li>';
+				echo '<li><input style="margin:0;" type="radio" name="quickpay-gwType" value="creditcard" checked/> ' . $labelCreditCard . '</li>';
+				echo '<li><input style="margin:0;" type="radio" name="quickpay-gwType" value="viaBill" /> '. $labelViaBill .'</li>';
 				echo '</ul>';				
 			}
 		}
@@ -289,7 +291,7 @@ function init_quickpay_gateway() {
 			$gwType = NULL;
 
 			if($this->gateway->ibillOrCreditcard === 'yes') {
-				if(isset($_POST['quickpay-gwType']) AND in_array($_POST['quickpay-gwType'], array('iBill', 'creditcard'))) {
+				if(isset($_POST['quickpay-gwType']) AND in_array($_POST['quickpay-gwType'], array('viaBill', 'creditcard'))) {
 					$gwType = $_POST['quickpay-gwType'];
 				}
 			}	
@@ -328,7 +330,7 @@ function init_quickpay_gateway() {
 				$description = '';
 			}
 			
-			if($this->settings['quickpay_ibillOrCreditcard'] === 'yes' AND isset($_GET['gwType'])  AND (strtolower($_GET['gwType']) === 'ibill') ) {
+			if($this->settings['quickpay_ibillOrCreditcard'] === 'yes' AND isset($_GET['gwType'])  AND (strtolower($_GET['gwType']) === 'viaBill') ) {
 				$cardtypelock = strtolower($_GET['gwType']);
 			} else {
 				$cardtypelock = $this->gateway->cardtypelock;
@@ -341,7 +343,7 @@ function init_quickpay_gateway() {
 				.$cardtypelock . $description . $this->settings['quickpay_md5secret']
 			);
 
-			echo 'You will be automatically redirected to the payment window in <strong>5 seconds</strong>. Click on the button below if you are not redirected.';
+			echo $this->settings['quickpay_redirectText'];
 			echo '
 				<form id="quickpay_payment_form" action="https://secure.quickpay.dk/form/" method="post">
 					<input type="hidden" name="protocol" value="'.self::PROTOCOL.'" />
@@ -594,10 +596,10 @@ function init_quickpay_gateway() {
 									'default' => 'no'
 					),
 					'quickpay_ibillOrCreditcard' => array(
-									'title' => __( 'Choose credit card or iBill on payment selection', 'woothemes' ), 
+									'title' => __( 'Choose credit card or viaBill on payment selection', 'woothemes' ), 
 									'type' => 'checkbox', 
 									'label' => __( 'Enable/Disable', 'woothemes' ), 
-									'description' => __( 'Allows your customers to choose between iBill and credit card when choosing type of payment. <b>(Requires iBill agreement)</b>' ), 
+									'description' => __( 'Allows your customers to choose between viaBill and credit card when choosing type of payment. <b>(Requires viaBill agreement)</b>' ), 
 									'default' => 'no'
 					),
 
@@ -622,7 +624,25 @@ function init_quickpay_gateway() {
 									'type' => 'text', 
 									'description' => __( 'This text will show on the button which opens the Quickpay window.', 'woothemes' ), 
 									'default' => __( 'Open secure Quickpay window.', 'woothemes' )
-								)
+								),
+					'quickpay_labelCreditCard' => array(
+									'title' => __( 'Credit card label', 'woothemes' ), 
+									'type' => 'text', 
+									'description' => __( 'Label shown when choosing credit card or viaBill.', 'woothemes' ), 
+									'default' => __( 'Credit card', 'woothemes' )
+								),
+					'quickpay_labelViaBill' => array(
+									'title' => __( 'viaBill label', 'woothemes' ), 
+									'type' => 'text', 
+									'description' => __( 'Label shown when choosing credit card or viaBill.', 'woothemes' ), 
+									'default' => __( 'viaBill', 'woothemes' )
+								),
+					'quickpay_redirectText' => array(
+									'title' => __( 'Redirect message', 'woothemes' ), 
+									'type' => 'textarea', 
+									'description' => __( 'This message is shown right before the customer is automatically redirected to the Quickpay payment window.', 'woothemes' ), 
+									'default' => 'You will be automatically redirected to the payment window in <strong>5 seconds</strong>. Click on the button below if you are not redirected.'
+								),
 				);	
 
 			if($this->subscr_is_active()) {			
@@ -857,6 +877,7 @@ function init_quickpay_gateway() {
 				curl_setopt(self::$ch, CURLOPT_URL, 'https://secure.quickpay.dk/api');
 				curl_setopt(self::$ch, CURLOPT_POST, TRUE);
 				curl_setopt(self::$ch, CURLOPT_RETURNTRANSFER, TRUE);
+				curl_setopt(self::$ch, CURLOPT_SSL_VERIFYPEER , FALSE);
 			}
 
 			return self::$ch;
