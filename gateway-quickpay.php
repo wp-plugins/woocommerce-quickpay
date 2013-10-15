@@ -3,7 +3,7 @@
 Plugin Name: WooQuickpay
 Plugin URI: https://bitbucket.org/perfectsolution/woocommerce-quickpay/src
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 2.0.7
+Version: 2.0.8
 Author: Perfect Solution
 Author URI: http://perfect-solution.dk
 */
@@ -274,7 +274,7 @@ function init_quickpay_gateway() {
 				$labelCreditCard = ( ! empty($this->settings['quickpay_labelCreditCard'])) ? $this->settings['quickpay_labelCreditCard'] : 'Credit card';
 				echo '<ul style="list-style:none;">';
 				echo '<li><input style="margin:0;" type="radio" name="quickpay-gwType" value="creditcard" checked/> ' . $labelCreditCard . '</li>';
-				echo '<li><input style="margin:0;" type="radio" name="quickpay-gwType" value="viaBill" /> '. $labelViaBill .'</li>';
+				echo '<li><input style="margin:0;" type="radio" name="quickpay-gwType" value="viabill" /> '. $labelViaBill .'</li>';
 				echo '</ul>';				
 			}
 		}
@@ -291,7 +291,7 @@ function init_quickpay_gateway() {
 			$gwType = NULL;
 
 			if($this->gateway->ibillOrCreditcard === 'yes') {
-				if(isset($_POST['quickpay-gwType']) AND in_array($_POST['quickpay-gwType'], array('viaBill', 'creditcard'))) {
+				if(isset($_POST['quickpay-gwType']) AND in_array($_POST['quickpay-gwType'], array('viabill', 'creditcard'))) {
 					$gwType = $_POST['quickpay-gwType'];
 				}
 			}	
@@ -330,7 +330,7 @@ function init_quickpay_gateway() {
 				$description = '';
 			}
 			
-			if($this->settings['quickpay_ibillOrCreditcard'] === 'yes' AND isset($_GET['gwType'])  AND (strtolower($_GET['gwType']) === 'viaBill') ) {
+			if($this->settings['quickpay_ibillOrCreditcard'] === 'yes' AND isset($_GET['gwType'])  AND (strtolower($_GET['gwType']) === 'viabill') ) {
 				$cardtypelock = strtolower($_GET['gwType']);
 			} else {
 				$cardtypelock = $this->gateway->cardtypelock;
