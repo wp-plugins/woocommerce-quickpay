@@ -3,7 +3,7 @@
 Plugin Name: WooQuickpay
 Plugin URI: https://bitbucket.org/perfectsolution/woocommerce-quickpay/src
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 2.0.8
+Version: 2.0.9
 Author: Perfect Solution
 Author URI: http://perfect-solution.dk
 */
@@ -13,11 +13,6 @@ add_action('plugins_loaded', 'init_quickpay_gateway', 0);
 function init_quickpay_gateway() {
 
 	if ( ! class_exists( 'WC_Payment_Gateway' )) { return; }
-
-	// Add the gateway to WooCommerce
-	function add_quickpay_gateway( $methods ) {
-		$methods[] = 'WC_Quickpay'; return $methods;
-	}
 
 	class WC_Quickpay extends WC_Payment_Gateway {
 		const PROTOCOL = 7;
@@ -565,6 +560,9 @@ function init_quickpay_gateway() {
 									'options' => array(
 													'DKK' => 'DKK', 
 													'EUR' => 'EUR',
+													'GBP' => 'GBP',
+													'NOK' => 'NOK',
+													'SEK' => 'SEK',
 													'USD' => 'USD'
 													)
 					),
@@ -883,7 +881,18 @@ function init_quickpay_gateway() {
 			return self::$ch;
 		}
 	}
+	
+	if( ! function_exists('is_plugin_active')) {
+		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	}
+	if(is_admin() && ! is_plugin_active('woocommerce-subscriptions/woocommerce-subscriptions.php')) {
+		new WC_Quickpay();
+	}
 
+	// Add the gateway to WooCommerce
+	function add_quickpay_gateway( $methods ) {
+		$methods[] = 'WC_Quickpay'; return $methods;
+	}
 	add_filter('woocommerce_payment_gateways', 'add_quickpay_gateway' );	
 }
 
