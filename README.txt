@@ -3,7 +3,7 @@ Contributors: PerfectSolution
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration
 Requires at least: 3.5.0
 Tested up to: 3.6.1
-Stable tag: 2.0.9
+Stable tag: 2.1.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,10 @@ With WooQuickpay, you are able to integrate your Quickpay gateway to your WooCom
 6. You are good to go.
 
 == Changelog ==
+
+= 2.1.0 =
+* Bugfix: Static call to a non-static method caused strict errors.
+* Added support for WooCommerce 2.1.
 
 = 2.0.9 =
 * Bug where custom meta boxes were not instantiated should be fixed in this version

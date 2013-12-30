@@ -3,7 +3,7 @@
 Plugin Name: WooQuickpay
 Plugin URI: https://bitbucket.org/perfectsolution/woocommerce-quickpay/src
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 2.0.9
+Version: 2.1.0
 Author: Perfect Solution
 Author URI: http://perfect-solution.dk
 */
@@ -290,9 +290,10 @@ function init_quickpay_gateway() {
 					$gwType = $_POST['quickpay-gwType'];
 				}
 			}	
+
 			return array(
 				'result' 	=> 'success',
-				'redirect'	=> add_query_arg('order', $this->order->id, add_query_arg('key', $this->order->order_key, add_query_arg('gwType', $gwType, get_permalink(get_option('woocommerce_pay_page_id')))))
+				'redirect'	=>  add_query_arg( 'gwType', $gwType, $this->order->get_checkout_payment_url( true ))
 			);	
 		}
 
@@ -307,12 +308,11 @@ function init_quickpay_gateway() {
 		private function generate_quickpay_button( $order_id ) {
 			$this->order = new WC_Order( $order_id );
 			$subscription = ($this->subscr_is_active()) ? WC_Subscriptions_Order::order_contains_subscription( $this->order ) : FALSE;
-			 
 			$ordernumber 	= substr(md5(time()), 0, 3).'-QP-'.str_pad($this->get_order_number() , 4, 0, STR_PAD_LEFT);
 			$query_args_cancellation = array('order' => $order_id, 'payment_cancellation' => 'yes');
 			$query_args_callback = array('order' => $order_id, 'qp_callback' => 'true');
-			$continueurl	= add_query_arg('key', $this->order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id'))));
-			$cancelurl		= add_query_arg('key', $this->order->order_key, add_query_arg($query_args_cancellation, get_permalink(get_option('woocommerce_cart_page_id'))));
+			$continueurl	= $this->order->get_checkout_order_received_url();
+			$cancelurl		= str_replace('&amp;', '&', $this->order->get_cancel_order_url());
 			$callbackurl	= str_replace( 'https:', 'http:', add_query_arg( 'wc-api', 'WC_Quickpay', home_url( '/' ) ) );
 
 			if($subscription) {
@@ -330,7 +330,6 @@ function init_quickpay_gateway() {
 			} else {
 				$cardtypelock = $this->gateway->cardtypelock;
 			}
-			
 
 			$md5check = md5(
 				self::PROTOCOL . $msgtype . $this->settings['quickpay_merchantid'] . $this->settings['quickpay_language'] . $ordernumber
@@ -741,19 +740,37 @@ function init_quickpay_gateway() {
 			global $post, $woocommerce;
 			$this->order = new WC_Order( $post->ID );
 			
-			// Show transaction ID on the overview
-			if($column == 'billing_address') {	
-				// Get the transaction status
-				$status = $this->api_payment_status('msgtype');
+			if(version_compare($woocommerce->version, '2.1', '<')) {
+				// Show transaction ID on the overview
+				if($column == 'shipping_address') {	
+					// Get the transaction status
+					$status = $this->api_payment_status('msgtype');
 
-				// Insert transaction id and payment status if any
-				$transaction_id = $this->get_transaction_id();
+					// Insert transaction id and payment status if any
+					$transaction_id = $this->get_transaction_id();
 
-				if($transaction_id) {
-					echo '<small class=\"meta\">Transaction id: '.$transaction_id.'</small><br />';		
-					echo '<small style="color:'.$this->colors( $status ).'">Payment state: '.$this->format_msgtype($status).'</small>';
+					if($transaction_id) {
+						echo '<small class=\"meta\">Transaction id: '.$transaction_id.'</small><br />';		
+						echo '<small style="color:'.$this->colors( $status ).'">Payment state: '.$this->format_msgtype($status).'</small>';
+					}
 				}
+			// Versions BELOW 2.1
+			} else {
+				// Show transaction ID on the overview
+				if($column == 'billing_address') {	
+					// Get the transaction status
+					$status = $this->api_payment_status('msgtype');
+
+					// Insert transaction id and payment status if any
+					$transaction_id = $this->get_transaction_id();
+
+					if($transaction_id) {
+						echo '<small class=\"meta\">Transaction id: '.$transaction_id.'</small><br />';		
+						echo '<small style="color:'.$this->colors( $status ).'">Payment state: '.$this->format_msgtype($status).'</small>';
+					}
+				}				
 			}
+
 		}
 
 		private function get_transaction_id() {
@@ -852,7 +869,7 @@ function init_quickpay_gateway() {
 			return md5( implode('' , $settings) );
 		}
 
-		public function request($params) {
+		public static function request($params) {
 			$params_string = '';
 			foreach($params as $key=>$value) {
 				$params_string .= $key .'='.$value.'&';
