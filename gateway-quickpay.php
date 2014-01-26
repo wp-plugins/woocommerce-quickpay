@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: WooQuickpay
-Plugin URI: https://bitbucket.org/perfectsolution/woocommerce-quickpay/src
+Plugin URI: http://wordpress.org/plugins/woocommerce-quickpay/
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 2.1.0
+Version: 2.1.1
 Author: Perfect Solution
 Author URI: http://perfect-solution.dk
 */
@@ -311,8 +311,8 @@ function init_quickpay_gateway() {
 			$ordernumber 	= substr(md5(time()), 0, 3).'-QP-'.str_pad($this->get_order_number() , 4, 0, STR_PAD_LEFT);
 			$query_args_cancellation = array('order' => $order_id, 'payment_cancellation' => 'yes');
 			$query_args_callback = array('order' => $order_id, 'qp_callback' => 'true');
-			$continueurl	= $this->order->get_checkout_order_received_url();
-			$cancelurl		= str_replace('&amp;', '&', $this->order->get_cancel_order_url());
+			$continueurl	= $this->get_continue_url();
+			$cancelurl		= $this->get_cancellation_url();
 			$callbackurl	= str_replace( 'https:', 'http:', add_query_arg( 'wc-api', 'WC_Quickpay', home_url( '/' ) ) );
 
 			if($subscription) {
@@ -832,6 +832,20 @@ function init_quickpay_gateway() {
 
 		public function js_enqueue() {
 		    wp_enqueue_script('core', plugins_url( '/core.js', __FILE__ ), array('jquery'));
+		}
+
+		public function get_continue_url() {
+			if( method_exists( $this->order, 'get_checkout_order_received_url' ) ) {
+				return $this->order->get_checkout_order_received_url();
+			}
+			return add_query_arg('key', $this->order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id'))));
+		}
+
+		public function get_cancellation_url() {
+			if( method_exists( $this->order, 'get_cancel_order_url' ) ) {
+				return str_replace('&amp;', '&', $this->order->get_cancel_order_url());
+			}
+			return add_query_arg('key', $this->order->order_key, add_query_arg($query_args_cancellation, get_permalink(get_option('woocommerce_cart_page_id'))));
 		}
 
 	}
