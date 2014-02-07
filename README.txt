@@ -1,4 +1,4 @@
-=== WooQuickpay ===
+=== WooCommerce Quickpay ===
 Contributors: PerfectSolution
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration, woocommerce, woocommerce quickpay, payment, payment gateway
 Requires at least: 3.5.0
@@ -10,12 +10,12 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Integrates your Quickpay payment gateway into your WooCommerce installation.
 
 == Description ==
-With WooQuickpay, you are able to integrate your Quickpay gateway to your WooCommerce install. With a wide list of API features including secure capturing, refunding and cancelling payments directly from your WooCommerce order overview. This is only a part of the many features found in this plugin.
+With WooCommerce Quickpay, you are able to integrate your Quickpay gateway to your WooCommerce install. With a wide list of API features including secure capturing, refunding and cancelling payments directly from your WooCommerce order overview. This is only a part of the many features found in this plugin.
 
 == Installation ==
 1. Upload the 'woocommerce-quickpay' folder to /wp-content/plugins/ on your server.
 2. Log in to Wordpress administration, click on the 'Plugins' tab.
-3. Find WooQuickpay in the plugin overview and activate it.
+3. Find WooCommerce Quickpay in the plugin overview and activate it.
 4. Go to WooCommerce -> Settings -> Payment Gateways -> Quickpay.
 5. Fill in all the fields in the "Quickpay account" section and save the settings.
 6. You are good to go.
@@ -24,7 +24,7 @@ With WooQuickpay, you are able to integrate your Quickpay gateway to your WooCom
 = 2.1.2 =
 * Fixed a undefined variable notices
 * Switched from WC_Subscriptions_Order::get_price_per_period to WC_Subscriptions_Order::get_recurring_total
-* Added transaction fee to orders
+* Added payment transaction fee to orders
 * Changed name to WooCommerce Quickpay
 
 = 2.1.1 =
@@ -53,7 +53,7 @@ With WooQuickpay, you are able to integrate your Quickpay gateway to your WooCom
 * Fixed undefined variable notice "params_string".
 
 = 2.0.4 =
-* Implemented a tweak to the "WooCommerce Sequential Order Numbers"-support which should fix any problems with WooQuickpay + Sequential order numbers.
+* Implemented a tweak to the "WooCommerce Sequential Order Numbers"-support which should fix any problems with WooCommerce Quickpay + Sequential order numbers.
 
 = 2.0.3 =
 * Fixing issues with cardtypelocks
