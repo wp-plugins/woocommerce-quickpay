@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: WooQuickpay
+Plugin Name: WooCommerce Quickpay
 Plugin URI: http://wordpress.org/plugins/woocommerce-quickpay/
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 2.1.1
+Version: 2.1.2
 Author: Perfect Solution
 Author URI: http://perfect-solution.dk
 */
@@ -168,7 +168,7 @@ function init_quickpay_gateway() {
 		private function api_action_recurring($amount = NULL) {
 			$response = WC_Quickpay_API::request($this->set_request_params('recurring', array(
 				'ordernumber' => time().'qp'.$this->get_order_number(), 
-				'amount' => $this->format_price( isset($amount) ? $amount : WC_Subscriptions_Order::get_price_per_period( $this->order ) ),
+				'amount' => $this->format_price( isset($amount) ? $amount : WC_Subscriptions_Order::get_recurring_total( $this->order ) ),
 				'currency' => $this->gateway->currency,
 				'autocapture' => 1
 			)));
@@ -337,7 +337,10 @@ function init_quickpay_gateway() {
 				.$cardtypelock . $description . $this->settings['quickpay_md5secret']
 			);
 
-			echo $this->settings['quickpay_redirectText'];
+			if( array_key_exists('quickpay_redirectText', $this->settings) ) {
+				echo $this->settings['quickpay_redirectText'];
+			}
+			
 			echo '
 				<form id="quickpay_payment_form" action="https://secure.quickpay.dk/form/" method="post">
 					<input type="hidden" name="protocol" value="'.self::PROTOCOL.'" />
@@ -430,6 +433,10 @@ function init_quickpay_gateway() {
 				$subscription = ($this->subscr_is_active()) ? WC_Subscriptions_Order::order_contains_subscription( $this->order ) : FALSE;
 
 				if(WC_Quickpay_API::validate_response($response, $this->settings['quickpay_md5secret'])) {
+
+					// Add transaction fee
+					$this->add_order_transaction_fee( $response->amount );
+
 					if($subscription) {
 						// Calculates the total amount to be charged at the outset of the Subscription taking into account sign-up fees, 
 						// per period price and trial period, if any.
@@ -471,7 +478,9 @@ function init_quickpay_gateway() {
 			return $order_number;
 		}
 
-		public function find_order_by_order_number( $order_number ) {		
+		public function find_order_by_order_number( $order_number ) {	
+			$order_id = null;	
+
 			// search for the order by custom order number
 			$query_args = array(
 						'numberposts' => 1,
@@ -482,7 +491,10 @@ function init_quickpay_gateway() {
 						'fields'      => 'ids'
 					);
 			
-			list( $order_id ) = get_posts( $query_args );
+			$post = get_posts( $query_args );
+			if( ! empty( $post ) ) {
+				list( $order_id ) = $post;
+			}
 			
 			// order was found
 			if ( $order_id !== null ) return $order_id;
@@ -838,16 +850,48 @@ function init_quickpay_gateway() {
 			if( method_exists( $this->order, 'get_checkout_order_received_url' ) ) {
 				return $this->order->get_checkout_order_received_url();
 			}
-			return add_query_arg('key', $this->order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id'))));
+			return add_query_arg('key', $this->order->order_key, add_query_arg('order', $this->order->id, get_permalink(get_option('woocommerce_thanks_page_id'))));
 		}
 
 		public function get_cancellation_url() {
 			if( method_exists( $this->order, 'get_cancel_order_url' ) ) {
 				return str_replace('&amp;', '&', $this->order->get_cancel_order_url());
 			}
-			return add_query_arg('key', $this->order->order_key, add_query_arg($query_args_cancellation, get_permalink(get_option('woocommerce_cart_page_id'))));
+			return add_query_arg('key', $this->order->order_key, add_query_arg( 
+				array( 
+					'order' => $this->order->id, 
+					'payment_cancellation' => 'yes'
+				), get_permalink(get_option('woocommerce_cart_page_id')))
+			);
 		}
 
+		public function add_order_transaction_fee( $transaction_total ) {
+			$order_total = $this->order->get_order_total() ;
+			$order_total_formated = $this->format_price( $order_total );
+
+			if( $transaction_total > $order_total ) {
+				$transaction_fee = $transaction_total - $order_total_formated;
+
+				$order_total_updated = $order_total_formated + $transaction_fee;
+				$order_total_updated = $this->deformat_price( $order_total_updated );
+
+				$transaction_fee = $this->deformat_price( $transaction_fee );
+
+				$order_meta_item_id = woocommerce_add_order_item( $this->order->id,  array(
+					'order_item_name' => __( 'Payment Fee', 'woocommerce' ),
+					'order_item_type' => 'fee'
+				));
+
+				woocommerce_add_order_item_meta( $order_meta_item_id, '_tax_class', '', TRUE );
+				woocommerce_add_order_item_meta( $order_meta_item_id, '_line_total', $transaction_fee, TRUE );
+				woocommerce_add_order_item_meta( $order_meta_item_id, '_line_tax', 0, TRUE );
+				update_post_meta( $this->order->id, '_order_total', woocommerce_format_total( $order_total_updated ) );
+
+				return TRUE;
+			}
+
+			return FALSE;
+		}
 	}
 
 	class WC_Quickpay_API {

@@ -3,7 +3,7 @@ Contributors: PerfectSolution
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration, woocommerce, woocommerce quickpay, payment, payment gateway
 Requires at least: 3.5.0
 Tested up to: 3.8.1
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,11 @@ With WooQuickpay, you are able to integrate your Quickpay gateway to your WooCom
 6. You are good to go.
 
 == Changelog ==
+= 2.1.2 =
+* Fixed a undefined variable notices
+* Switched from WC_Subscriptions_Order::get_price_per_period to WC_Subscriptions_Order::get_recurring_total
+* Added payment transaction fee to orders
+* Changed name to WooCommerce Quickpay
 
 = 2.1.1 =
 * Fixes FATAL ERROR bug on checkout introduced in 2.1.0
