@@ -1,6 +1,6 @@
 === WooCommerce Quickpay ===
 Contributors: PerfectSolution
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=P84MN9C8733HE
+Donate link: http://perfect-solution.dk/donation
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration, woocommerce, woocommerce quickpay, payment, payment gateway
 Requires at least: 3.5.0
 Tested up to: 3.8.1
