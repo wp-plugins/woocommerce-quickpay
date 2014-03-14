@@ -4,7 +4,7 @@ Donate link: http://perfect-solution.dk/donation
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration, woocommerce, woocommerce quickpay, payment, payment gateway
 Requires at least: 3.5.0
 Tested up to: 3.8.1
-Stable tag: 2.1.2
+Stable tag: 2.1.3
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,8 +22,16 @@ With WooCommerce Quickpay, you are able to integrate your Quickpay gateway to yo
 6. You are good to go.
 
 == Changelog ==
+
+= 2.1.3 =
+* Added i18n support, current supported languages: en_UK, da_DK
+* Added possibility to add email instructions on the order confirmation. Thanks to Emil Eriksen for idea and contribution.
+* Added possibility to change test mode directly in WooCommerce. Thanks to Emil Eriksen for idea and contribution.
+* Added eye candy in form of SVN header banner
+* Added donation link to all of you lovely fellows who might wanna donate a coin for our work.
+
 = 2.1.2 =
-* Fixed a undefined variable notices
+* Fixed an undefined variable notices
 * Switched from WC_Subscriptions_Order::get_price_per_period to WC_Subscriptions_Order::get_recurring_total
 * Added payment transaction fee to orders
 * Changed name to WooCommerce Quickpay

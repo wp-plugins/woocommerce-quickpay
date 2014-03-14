@@ -3,8 +3,9 @@
 Plugin Name: WooCommerce Quickpay
 Plugin URI: http://wordpress.org/plugins/woocommerce-quickpay/
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 2.1.2
+Version: 2.1.3
 Author: Perfect Solution
+Text Domain: woo-quickpay
 Author URI: http://perfect-solution.dk
 */
 
@@ -36,6 +37,9 @@ function init_quickpay_gateway() {
 			// Get gateway variables
 			$this->title = $this->settings['title'];
 			$this->description = $this->settings['description'];
+			$this->instructions = isset($this->settings['instructions']) ? $this->settings['instructions'] : '';
+
+			$test_mode = isset($this->settings['quickpay_testmode']) ? $this->settings['quickpay_testmode'] : 'no';
 
 			$this->gateway = (object) array(
 				'protocol' => self::PROTOCOL,
@@ -44,6 +48,7 @@ function init_quickpay_gateway() {
 				'secret' => $this->settings['quickpay_md5secret'],
 				'language' => $this->settings['quickpay_language'],
 				'currency' => $this->settings['quickpay_currency'],
+				'testmode' => $test_mode == 'yes' ? 1 : 0,
 				'autocapture' => $this->settings['quickpay_autocapture'] == 'yes' ? 1 : 0,
 				'cardtypelock' => $this->settings['quickpay_cardtypelock'],
 				'splitcapture' => $this->settings['quickpay_splitcapture'],
@@ -52,8 +57,8 @@ function init_quickpay_gateway() {
 			);
 
 		    // Actions
+		    add_action('init', array( $this, 'load_i18n' ) );
 		    add_action('woocommerce_api_wc_quickpay', array($this, 'check_quickpay_response'));    
-			add_action('quickpay-approved', array($this, 'process_complete'));
 		    add_action('woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );	    
 		    add_action('woocommerce_receipt_quickpay', array($this, 'receipt_page'));
 		    add_action('scheduled_subscription_payment_quickpay', array($this, 'scheduled_subscription_payment'), 10, 3);
@@ -64,6 +69,12 @@ function init_quickpay_gateway() {
 		    add_action('add_meta_boxes', array($this, 'quickpay_meta_boxes'));
 		    add_action('woocommerce_order_status_completed', array($this, 'api_capture_on_order_status_complete'));
 		    add_action('admin_menu', array($this, 'js_enqueue'));
+		    add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 2 );
+		}
+
+		// Load i18n
+		public function load_i18n() {
+			load_plugin_textdomain( 'woo-quickpay' , FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
 		}
 
 		// This check is runned every time a page request is made
@@ -142,14 +153,14 @@ function init_quickpay_gateway() {
 		private function api_action_renew() {
 			$response = WC_Quickpay_API::request($this->set_request_params('renew'));	
 			if( ! is_wp_error($response)) {
-				$this->note('Payment renewed.');
+				$this->note( __( 'Payment renewed', 'woo-quickpay' ) );
 			}
 		}
 
 		private function api_action_refund() {
 			$response = WC_Quickpay_API::request($this->set_request_params('refund', array('amount' => $this->format_price($this->order->order_total))));
 			if( ! is_wp_error($response)) {
-				$this->note('Payment refunded.');
+				$this->note( __('Payment refunded', 'woo-quickpay' ) );
 			}		
 		}
 
@@ -174,10 +185,10 @@ function init_quickpay_gateway() {
 			)));
 
 			if( ! is_wp_error($response)) {
-				$this->note('Recurring payment captured.');
+				$this->note( __('Recurring payment captured', 'woo-quickpay' ) );
 				return TRUE;
 			} else {
-				$this->note('Recurring payment failed.');
+				$this->note( __('Recurring payment failed', 'woo-quickpay' ) );
 				return FALSE;
 			}
 		}
@@ -255,18 +266,13 @@ function init_quickpay_gateway() {
 				$this->order->add_order_note('Quickpay: ' . $message);
 			}
 		}
-
-		public function process_complete() {
-			global $woocommerce;
-			$woocommerce->cart->empty_cart();
-		}
-		
+	
 		public function payment_fields() {
 			if ($this->description) echo wpautop(wptexturize($this->description));
 
 			if($this->gateway->ibillOrCreditcard === 'yes') {
 				$labelViaBill = ( ! empty($this->settings['quickpay_labelViaBill'])) ? $this->settings['quickpay_labelViaBill'] : 'viaBill';
-				$labelCreditCard = ( ! empty($this->settings['quickpay_labelCreditCard'])) ? $this->settings['quickpay_labelCreditCard'] : 'Credit card';
+				$labelCreditCard = ( ! empty($this->settings['quickpay_labelCreditCard'])) ? $this->settings['quickpay_labelCreditCard'] : __( 'Credit card', 'woo-quickpay' );
 				echo '<ul style="list-style:none;">';
 				echo '<li><input style="margin:0;" type="radio" name="quickpay-gwType" value="creditcard" checked/> ' . $labelCreditCard . '</li>';
 				echo '<li><input style="margin:0;" type="radio" name="quickpay-gwType" value="viabill" /> '. $labelViaBill .'</li>';
@@ -279,7 +285,10 @@ function init_quickpay_gateway() {
 			echo $this->generate_quickpay_button( $order );
 		}
 	
-		public function process_payment( $order_id ) {	
+		public function process_payment( $order_id ) {
+			global $woocommerce;
+			$woocommerce->cart->empty_cart();
+
 			if( ! isset($this->order))
 				$this->order = new WC_Order( $order_id );
 
@@ -334,7 +343,7 @@ function init_quickpay_gateway() {
 			$md5check = md5(
 				self::PROTOCOL . $msgtype . $this->settings['quickpay_merchantid'] . $this->settings['quickpay_language'] . $ordernumber
 				.$amount . $this->settings['quickpay_currency'] . $continueurl . $cancelurl . $callbackurl . $this->gateway->autocapture
-				.$cardtypelock . $description . $this->settings['quickpay_md5secret']
+				.$cardtypelock . $this->gateway->testmode . $description . $this->settings['quickpay_md5secret']
 			);
 
 			if( array_key_exists('quickpay_redirectText', $this->settings) ) {
@@ -354,7 +363,8 @@ function init_quickpay_gateway() {
 					<input type="hidden" name="cancelurl" value="'.$cancelurl.'" />
 					<input type="hidden" name="callbackurl" value="'.$callbackurl.'" />
 					<input type="hidden" name="autocapture" value="'.$this->gateway->autocapture.'" />
-					<input type="hidden" name="cardtypelock" value="'.$cardtypelock.'" />';
+					<input type="hidden" name="cardtypelock" value="'.$cardtypelock.'" />
+					<input type="hidden" name="testmode" value="'.$this->gateway->testmode.'" />';
 			
 			if($subscription) {
 				echo'<input type="hidden" name="description" value="'.$description.'" />';
@@ -375,12 +385,13 @@ function init_quickpay_gateway() {
 
 			// Redirect the customer to account page if the current order is failed
 			if($this->order->status == 'failed') {
-				$woocommerce->add_error(__('<p><strong>Payment failure</strong>', 'woocommerce') . ': A problem with your payment on order <strong>#'.$this->order->id.'</strong> occured. Please try again to complete your order.</p>');
+				$payment_failure_text = printf( __( '<p><strong>Payment failure</strong> A problem with your payment on order <strong>#%i</strong> occured. Please try again to complete your order.</p>', 'woo-quickpay' ), $this->order->id );
+				$woocommerce->add_error('<p><strong>' . __('Payment failure', 'woo-quickpay') . '</strong>: '. $payment_failure_text . '</p>');
 				wp_redirect(get_permalink(get_option('woocommerce_myaccount_page_id')));
-			}
-			
-			$this->order->add_order_note('Quickpay Payment: Cancelled during process.');
-			$woocommerce->add_error(__('<p><strong>Payment cancelled</strong>', 'woocommerce') . ': Due to cancellation of your payment, the order process was not completed. Please fulfill the payment to complete your order.</p>');
+			}	
+
+			$this->order->add_order_note( __('Quickpay Payment', 'woo-quickpay') . ': ' . __('Cancelled during process', 'woo-quickpay') );
+			$woocommerce->add_error('<p><strong>' . __('Payment cancelled', 'woo-quickpay') . '</strong>: ' . __( 'Due to cancellation of your payment, the order process was not completed. Please fulfill the payment to complete your order.', 'woo-quickpay' ) .'</p>' );
 		}
 
 		public function create_md5($p) {
@@ -456,10 +467,11 @@ function init_quickpay_gateway() {
 					} else {
 						$this->order->update_status('processing');
 						$this->order->reduce_order_stock();
-						$this->note('Payment authorized.');
+						$this->note( __('Payment authorized', 'woo-quickpay') );
 					}
 				} else {
-					$this->order->add_order_note('Quickpay payment FAILED. Message from Quickpay: ' . $response->qpstatmsg);
+					$failed_note = printf( __( 'Quickpay payment FAILED. Message from Quickpay: %S', 'woo-quickpay'), $response->qpstatmsg );
+					$this->order->add_order_note( $failed_note );
 					if($subscription) {
 						WC_Subscriptions_Manager::process_subscription_payment_failure_on_order( $this->order );
 					} else {
@@ -518,30 +530,36 @@ function init_quickpay_gateway() {
 		public function init_form_fields() {
 	    	$this->form_fields = array(
 				'enabled' => array(
-								'title' => __( 'Enable/Disable', 'woothemes' ), 
+								'title' => __( 'Enable/Disable', 'woo-quickpay' ), 
 								'type' => 'checkbox', 
-								'label' => __( 'Enable Quickpay Payment', 'woothemes' ), 
+								'label' => __( 'Enable Quickpay Payment', 'woo-quickpay' ), 
 								'default' => 'yes'
 							), 
 
 				'_Account_setup' => array(
 					'type' => 'title',
-					'title' => 'Quickpay account'
+					'title' => __( 'Quickpay account', 'woo-quickpay' ),
 				),
+					'quickpay_testmode' => array(
+						'title' => __( 'Enable testmode', 'woo-quickpay' ), 
+						'type' => 'checkbox', 
+						'label' => __( 'Enable testmode', 'woo-quickpay' ), 
+						'default' => 'no'
+					),
 					'quickpay_merchantid' => array(
-									'title' => __('Quickpay Merchant ID', 'woothemes'),
+									'title' => __('Quickpay Merchant ID', 'woo-quickpay'),
 									'type' => 'text',
-									'description' => __('Type in your merchant ID from Quickpay.', 'woothemes')
+									'description' => __('Type in your merchant ID from Quickpay.', 'woo-quickpay')
 					),
 					'quickpay_md5secret' => array(
-									'title' => __('Secret MD5 string', 'woothemes'),
+									'title' => __('Secret MD5 string', 'woo-quickpay'),
 									'type' => 'text',
 									'description' => __('This is the unique MD5 secret key, which the system uses to verify your transactions.')
 					),
 					'quickpay_apikey' => array(
-						'title' => __('Quickpay API key'),
+						'title' => __('Quickpay API key', 'woo-quickpay'),
 						'type' => 'text',
-						'description' => 'The API key is unique and can be requested from within the Quickpay Administrator Tool'
+						'description' => __( 'The API key is unique and can be requested from within the Quickpay Administrator Tool', 'woo-quickpay' )
 					),	
 
 				'_Extra_gateway_settings' => array(
@@ -549,8 +567,8 @@ function init_quickpay_gateway() {
 					'title' => 'Extra gateway settings'
 				),
 					'quickpay_language' => array(
-									'title' => __('Language', 'woothemes'),
-									'description' => __('Payment Window Language', 'woothemes'),
+									'title' => __('Language', 'woo-quickpay'),
+									'description' => __('Payment Window Language', 'woo-quickpay'),
 									'type' => 'select',
 									'options' => array(
 													'da' => 'Danish',
@@ -565,8 +583,8 @@ function init_quickpay_gateway() {
 													)
 					),
 					'quickpay_currency' => array(
-									'title' => __('Currency', 'woothemes'),
-									'description' => 'Choose your currency. Please make sure to use the same currency as in your WooCommerce currency settings.',
+									'title' => __('Currency', 'woo-quickpay'),
+									'description' => __('Choose your currency. Please make sure to use the same currency as in your WooCommerce currency settings.', 'woo-quickpay' ),
 									'type' => 'select',
 									'options' => array(
 													'DKK' => 'DKK', 
@@ -578,79 +596,85 @@ function init_quickpay_gateway() {
 													)
 					),
 					'quickpay_cardtypelock' => array(
-									'title' => __( 'Cardtype lock', 'woothemes' ), 
+									'title' => __( 'Cardtype lock', 'woo-quickpay' ), 
 									'type' => 'text', 
-									'description' => __( 'Default: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://quickpay.dk/features/cardtypelock/</b>', 'woothemes' ), 
-									'default' => __( 'creditcard', 'woothemes' )					
+									'description' => __( 'Default: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://quickpay.dk/features/cardtypelock/</b>', 'woo-quickpay' ), 
+									'default' => 'creditcard'					
 					),	
 					'quickpay_splitcapture' => array(
-									'title' => __( 'Enable split payments', 'woothemes' ), 
+									'title' => __( 'Enable split payments', 'woo-quickpay' ), 
 									'type' => 'checkbox', 
-									'label' => __( 'Accept split payments in your system.', 'woothemes' ), 
-									'description' => __( 'Remember to turn this on in your Quickpay Manager. Click for <a target="_blank" href="http://quickpay.dk/features/split-payment/">help</a>', 'woothemes' ), 
+									'label' => __( 'Accept split payments in your system.', 'woo-quickpay' ), 
+									'description' => __( 'Remember to turn this on in your Quickpay Manager. Click for <a target="_blank" href="http://quickpay.dk/features/split-payment/">help</a>', 'woo-quickpay' ), 
 									'default' => 'yes'
 					),
 					'quickpay_autocapture' => array(
-									'title' => __( 'Allow autocapture', 'woothemes' ), 
+									'title' => __( 'Allow autocapture', 'woo-quickpay' ), 
 									'type' => 'checkbox', 
-									'label' => __( 'Enable/Disable', 'woothemes' ), 
-									'description' => __( 'Automatically capture payments.' ), 
+									'label' => __( 'Enable/Disable', 'woo-quickpay' ), 
+									'description' => __( 'Automatically capture payments.', 'woo-quickpay' ), 
 									'default' => 'no'
 					),
 					'quickpay_captureoncomplete' => array(
-									'title' => __( 'Capture on complete', 'woothemes' ), 
+									'title' => __( 'Capture on complete', 'woo-quickpay' ), 
 									'type' => 'checkbox', 
-									'label' => __( 'Enable/Disable', 'woothemes' ), 
-									'description' => __( 'When enabled quickpay payments will automatically be captured when order state is set to "Complete".' ), 
+									'label' => __( 'Enable/Disable', 'woo-quickpay' ), 
+									'description' => __( 'When enabled quickpay payments will automatically be captured when order state is set to "Complete".', 'woo-quickpay'), 
 									'default' => 'no'
 					),
 					'quickpay_ibillOrCreditcard' => array(
-									'title' => __( 'Choose credit card or viaBill on payment selection', 'woothemes' ), 
+									'title' => __( 'Choose credit card or viaBill on payment selection', 'woo-quickpay' ), 
 									'type' => 'checkbox', 
-									'label' => __( 'Enable/Disable', 'woothemes' ), 
-									'description' => __( 'Allows your customers to choose between viaBill and credit card when choosing type of payment. <b>(Requires viaBill agreement)</b>' ), 
+									'label' => __( 'Enable/Disable', 'woo-quickpay' ), 
+									'description' => __( 'Allows your customers to choose between viaBill and credit card when choosing type of payment. <b>(Requires viaBill agreement)</b>', 'woo-quickpay' ), 
 									'default' => 'no'
 					),
 
 				'_Shop_setup' => array(
 					'type' => 'title',
-					'title' => 'Shop setup'
+					'title' => __( 'Shop setup', 'woo-quickpay' ),
 				),
 					'title' => array(
-									'title' => __( 'Title', 'woothemes' ), 
+									'title' => __( 'Title', 'woo-quickpay' ), 
 									'type' => 'text', 
-									'description' => __( 'This controls the title which the user sees during checkout.', 'woothemes' ), 
-									'default' => __( 'Quickpay', 'woothemes' )
+									'description' => __( 'This controls the title which the user sees during checkout.', 'woo-quickpay' ), 
+									'default' => __( 'Quickpay', 'woo-quickpay' )
 								),
 					'description' => array(
-									'title' => __( 'Customer Message', 'woothemes' ), 
+									'title' => __( 'Customer Message', 'woo-quickpay' ), 
 									'type' => 'textarea', 
-									'description' => __( 'This controls the description which the user sees during checkout.', 'woothemes' ), 
+									'description' => __( 'This controls the description which the user sees during checkout.', 'woo-quickpay' ), 
 									'default' => 'Pay via Quickpay. Allows you to pay with your credit card via Quickpay.'
 								),
+					'instructions' => array(
+						'title'       => __( 'Email instructions', 'woo-quickpay' ),
+						'type'        => 'textarea',
+						 'description' => __( 'Instructions that will be added to emails.', 'woo-quickpay' ),
+						 'default'     => '',
+					 ),
 					'quickpay_paybuttontext' => array(
-									'title' => __( 'Text on payment button', 'woothemes' ), 
+									'title' => __( 'Text on payment button', 'woo-quickpay' ), 
 									'type' => 'text', 
-									'description' => __( 'This text will show on the button which opens the Quickpay window.', 'woothemes' ), 
-									'default' => __( 'Open secure Quickpay window.', 'woothemes' )
+									'description' => __( 'This text will show on the button which opens the Quickpay window.', 'woo-quickpay' ), 
+									'default' => __( 'Open secure Quickpay window.', 'woo-quickpay' )
 								),
 					'quickpay_labelCreditCard' => array(
-									'title' => __( 'Credit card label', 'woothemes' ), 
+									'title' => __( 'Credit card label', 'woo-quickpay' ), 
 									'type' => 'text', 
-									'description' => __( 'Label shown when choosing credit card or viaBill.', 'woothemes' ), 
-									'default' => __( 'Credit card', 'woothemes' )
+									'description' => __( 'Label shown when choosing credit card or viaBill.', 'woo-quickpay' ), 
+									'default' => __( 'Credit card', 'woo-quickpay' )
 								),
 					'quickpay_labelViaBill' => array(
-									'title' => __( 'viaBill label', 'woothemes' ), 
+									'title' => __( 'viaBill label', 'woo-quickpay' ), 
 									'type' => 'text', 
-									'description' => __( 'Label shown when choosing credit card or viaBill.', 'woothemes' ), 
-									'default' => __( 'viaBill', 'woothemes' )
+									'description' => __( 'Label shown when choosing credit card or viaBill.', 'woo-quickpay' ), 
+									'default' => __( 'viaBill', 'woo-quickpay' )
 								),
 					'quickpay_redirectText' => array(
-									'title' => __( 'Redirect message', 'woothemes' ), 
+									'title' => __( 'Redirect message', 'woo-quickpay' ), 
 									'type' => 'textarea', 
-									'description' => __( 'This message is shown right before the customer is automatically redirected to the Quickpay payment window.', 'woothemes' ), 
-									'default' => 'You will be automatically redirected to the payment window in <strong>5 seconds</strong>. Click on the button below if you are not redirected.'
+									'description' => __( 'This message is shown right before the customer is automatically redirected to the Quickpay payment window.', 'woo-quickpay' ), 
+									'default' => __('You will be automatically redirected to the payment window in <strong>5 seconds</strong>. Click on the button below if you are not redirected.', 'woo-quickpay' )
 								),
 				);	
 
@@ -660,10 +684,10 @@ function init_quickpay_gateway() {
 					'title' => 'Subscriptions'
 				);
 				$this->form_fields['quickpay_autodraw_subscription'] = array(
-						'title' => __( 'Automatically capture the first payment of a subscription.', 'woothemes' ), 
+						'title' => __( 'Automatically capture the first payment of a subscription.', 'woo-quickpay' ), 
 						'type' => 'checkbox', 
-						'label' => __( 'Enable/Disable', 'woothemes' ), 
-						'description' => __( 'Automatically capture the first payment of a subscription when order is complete.' ), 
+						'label' => __( 'Enable/Disable', 'woo-quickpay' ), 
+						'description' => __( 'Automatically capture the first payment of a subscription when order is complete.', 'woo-quickpay' ), 
 						'default' => 'yes'
 				);
 			}
@@ -671,8 +695,8 @@ function init_quickpay_gateway() {
 
 		public function admin_options() {
 			?>
-			<h3><?php _e('Quickpay', 'woothemes'); ?></h3>
-			<p><?php _e('Allows you to receive payments via Quickpay.', 'woothemes'); ?></p>
+			<h3><?php _e('Quickpay', 'woo-quickpay'); ?></h3>
+			<p><?php _e('Allows you to receive payments via Quickpay.', 'woo-quickpay'); ?></p>
 			<table class="form-table">
 				<?php $this->generate_settings_html(); ?>
 			</table>	
@@ -680,7 +704,7 @@ function init_quickpay_gateway() {
 		}
 
 		public function quickpay_meta_boxes() {
-			 add_meta_box('quickpay-payment-actions', __('Quickpay Payment', 'woocommerce'), array(&$this, 'quickpay_meta_box_payment'), 'shop_order', 'side', 'high');
+			 add_meta_box('quickpay-payment-actions', __('Quickpay Payment', 'woo-quickpay'), array(&$this, 'quickpay_meta_box_payment'), 'shop_order', 'side', 'high');
 		}
 
 		public function quickpay_meta_box_payment() {
@@ -692,24 +716,24 @@ function init_quickpay_gateway() {
 			$balance = $this->api_payment_status('balance');
 
 			if($transaction_id) { ?>		
-					<p><strong>Current payment state: <?php echo  $this->format_msgtype($this->api_payment_status("msgtype"))?></strong></p>
+					<p><strong><?php _e('Current payment state', 'woo-quickpay'); ?>: <?php echo  $this->format_msgtype($this->api_payment_status("msgtype"))?></strong></p>
 
 					<?php if($this->api_is_action_allowed('regular_header', $state)) : ?>
-						<h3>Standard actions</h3>
+						<h3><?php _e('Standard actions', 'woo-quickpay'); ?></h3>
 						<ul class="order_actions">
 							<?php if($this->api_is_action_allowed('capture', $state)) : ?>
 								<li>
-									<a class="button button-primary" onclick="return notify('You are about to CAPTURE this payment.');" href="<?php echo admin_url('post.php?post='.$post->ID.'&action=edit&quickpay_action=capture'); ?>"><?php _e('Capture', 'woocommerce'); ?></a>
+									<a class="button button-primary" onclick="return notify('<?php _e('You are about to CAPTURE this payment', 'woo-quickpay'); ?>');" href="<?php echo admin_url('post.php?post='.$post->ID.'&action=edit&quickpay_action=capture'); ?>"><?php _e('Capture', 'woo-quickpay'); ?></a>
 								</li>
 							<?php endif; ?>
 							<?php if($this->api_is_action_allowed('cancel', $state)) : ?>
 								<li>
-									<a class="button" onclick="return notify('You are about to CANCEL this payment.')" href="<?php echo admin_url('post.php?post='.$post->ID.'&action=edit&quickpay_action=cancel'); ?>"><?php _e('Cancel', 'woocommerce'); ?></a>
+									<a class="button" onclick="return notify('<?php _e('You are about to CANCEL this payment', 'woo-quickpay'); ?>')" href="<?php echo admin_url('post.php?post='.$post->ID.'&action=edit&quickpay_action=cancel'); ?>"><?php _e('Cancel', 'woo-quickpay'); ?></a>
 								</li>
 							<?php endif; ?>
 							<?php if($this->api_is_action_allowed('refund', $state)) : ?>
 								<li>
-									<a class="button" onclick="return notify('You are about to REFUND this payment.')" href="<?php echo admin_url('post.php?post='.$post->ID.'&action=edit&quickpay_action=refund'); ?>"><?php _e('Refund', 'woocommerce'); ?></a>
+									<a class="button" onclick="return notify('<?php _e('You are about to REFUND this payment', 'woo-quickpay'); ?>')" href="<?php echo admin_url('post.php?post='.$post->ID.'&action=edit&quickpay_action=refund'); ?>"><?php _e('Refund', 'woo-quickpay'); ?></a>
 								</li>
 								<li>&nbsp;</li>
 							<?php endif; ?>
@@ -719,14 +743,14 @@ function init_quickpay_gateway() {
 					<br />
 
 					<?php if($this->gateway->splitcapture == 'yes' AND $this->api_is_action_allowed('splitcapture', $state) AND $balance < $this->format_price($this->order->order_total)) : ?>
-					<h3>Split payment</h3>
+					<h3><?php _e('Split payment', 'woo-quickpay'); ?></h3>
 					<ul class="order_actions">
-						<li style="text-align:left;">Balance: <?php echo  $this->deformat_price($balance)?> <?php echo $this->gateway->currency ?></li>
+						<li style="text-align:left;"><?php _e('Balance', 'woo-quickpay'); ?>: <?php echo  $this->deformat_price($balance)?> <?php echo $this->gateway->currency ?></li>
 						<li style="text-align:left;">
 							<span id="quickpay_balance_container">
-								Remaining: 							
+								<?php _e('Remaining', 'woo-quickpay'); ?>: 							
 								<span id="quickpay_balance"><?php echo  $this->deformat_price($this->format_price($this->order->order_total)-$balance)?></span>
-								<?php echo  $this->gatewat->currency ?>
+								<?php echo  $this->gateway->currency ?>
 							</span> 
 						</li>
 					</ul>
@@ -736,8 +760,8 @@ function init_quickpay_gateway() {
 								<span><input type="text" onkeyup="quickpay_url_modify()" style="width:87%;text-align:right;" id="quickpay_split_amount" name="quickpay_split_amount" /></span><span> <?php echo $this->gateway->currency?>
 							</p>
 							<p>
-								<span><a id="quickpay_split_button" class="button" onclick="return notify('You are about to SPLIT CAPTURE this payment. This means that you will capture the amount stated in the input field. The payment state will remain open.')" href="<?php echo admin_url('post.php?post='.$post->ID.'&action=edit&quickpay_action=splitcapture'); ?>"><?php _e('Split Capture', 'woocommerce'); ?></a></span>
-								<span><a id="quickpay_split_finalize_button" class="button" onclick="return notify('You are about to SPLIT CAPTURE and FINALIZE this payment. This means that you will capture the amount stated in the input field and that you can no longer capture money from this transaction.')" href="<?php echo admin_url('post.php?post='.$post->ID.'&action=edit&quickpay_action=splitcapture&quickpay_finalize=yes'); ?>"><?php _e('Split and finalize', 'woocommerce'); ?></a></span>
+								<span><a id="quickpay_split_button" class="button" onclick="return notify('You are about to SPLIT CAPTURE this payment. This means that you will capture the amount stated in the input field. The payment state will remain open.')" href="<?php echo admin_url('post.php?post='.$post->ID.'&action=edit&quickpay_action=splitcapture'); ?>"><?php _e('Split Capture', 'woo-quickpay'); ?></a></span>
+								<span><a id="quickpay_split_finalize_button" class="button" onclick="return notify('You are about to SPLIT CAPTURE and FINALIZE this payment. This means that you will capture the amount stated in the input field and that you can no longer capture money from this transaction.')" href="<?php echo admin_url('post.php?post='.$post->ID.'&action=edit&quickpay_action=splitcapture&quickpay_finalize=yes'); ?>"><?php _e('Split and finalize', 'woo-quickpay'); ?></a></span>
 							</p>
 						</li>
 					<?php endif; ?>
@@ -747,7 +771,14 @@ function init_quickpay_gateway() {
 				<?php
 			}
 		}
+		public function email_instructions( $order, $sent_to_admin ) {
+			if ( $sent_to_admin || $order->status !== 'processing' && $order->status !== 'completed' || $order->payment_method !== 'quickpay' )
+				return;
 
+			if ( $this->instructions )
+				echo wpautop( wptexturize( $this->instructions ) );
+		}
+		
 		public function add_custom_order_data($column) {
 			global $post, $woocommerce;
 			$this->order = new WC_Order( $post->ID );
@@ -878,7 +909,7 @@ function init_quickpay_gateway() {
 				$transaction_fee = $this->deformat_price( $transaction_fee );
 
 				$order_meta_item_id = woocommerce_add_order_item( $this->order->id,  array(
-					'order_item_name' => __( 'Payment Fee', 'woocommerce' ),
+					'order_item_name' => __( 'Payment Fee', 'woo-quickpay' ),
 					'order_item_type' => 'fee'
 				));
 
