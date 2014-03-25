@@ -477,8 +477,6 @@ function init_quickpay_gateway() {
 
 					} else {
 						$this->order->payment_complete();
-						//$this->order->update_status('processing');
-						//$this->order->reduce_order_stock();
 						$this->note( __('Payment authorized', 'woo-quickpay') );
 					}
 				} else {
