@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Quickpay
 Plugin URI: http://wordpress.org/plugins/woocommerce-quickpay/
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 2.1.3
+Version: 2.1.4 
 Author: Perfect Solution
 Text Domain: woo-quickpay
 Author URI: http://perfect-solution.dk
@@ -75,6 +75,17 @@ function init_quickpay_gateway() {
 		// Load i18n
 		public function load_i18n() {
 			load_plugin_textdomain( 'woo-quickpay' , FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+		}
+
+		// Show action links on the "Installed plugins" overview
+		public static function action_links( $links ) {
+			$links = array_merge( array(
+				'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_quickpay' ) . '">' . __( 'Settings', 'woo-quickpay' ) . '</a>',
+			), $links );
+
+			array_push( $links, '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JWDJPFHNVS5BG"><img style="vertical-align:middle;" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" alt="PayPal - The safer, easier way to pay online!" /></a>' );
+			
+			return $links;
 		}
 
 		// This check is runned every time a page request is made
@@ -326,7 +337,7 @@ function init_quickpay_gateway() {
 
 			if($subscription) {
 				$msgtype = 'subscribe';
-				$amount = $this->format_price(WC_Subscriptions_Order::get_price_per_period( $this->order ));
+				$amount = $this->format_price(WC_Subscriptions_Order::get_total_initial_payment( $this->order ));
 				$description = 'qp_subscriber';
 			} else {
 				$msgtype = 'authorize';
@@ -343,7 +354,7 @@ function init_quickpay_gateway() {
 			$md5check = md5(
 				self::PROTOCOL . $msgtype . $this->settings['quickpay_merchantid'] . $this->settings['quickpay_language'] . $ordernumber
 				.$amount . $this->settings['quickpay_currency'] . $continueurl . $cancelurl . $callbackurl . $this->gateway->autocapture
-				.$cardtypelock . $this->gateway->testmode . $description . $this->settings['quickpay_md5secret']
+				.$cardtypelock . $description . $this->gateway->testmode . $this->settings['quickpay_md5secret']
 			);
 
 			if( array_key_exists('quickpay_redirectText', $this->settings) ) {
@@ -363,14 +374,13 @@ function init_quickpay_gateway() {
 					<input type="hidden" name="cancelurl" value="'.$cancelurl.'" />
 					<input type="hidden" name="callbackurl" value="'.$callbackurl.'" />
 					<input type="hidden" name="autocapture" value="'.$this->gateway->autocapture.'" />
-					<input type="hidden" name="cardtypelock" value="'.$cardtypelock.'" />
-					<input type="hidden" name="testmode" value="'.$this->gateway->testmode.'" />';
+					<input type="hidden" name="cardtypelock" value="'.$cardtypelock.'" />';
 			
 			if($subscription) {
 				echo'<input type="hidden" name="description" value="'.$description.'" />';
 			}
 
-			echo '			
+			echo '	<input type="hidden" name="testmode" value="'.$this->gateway->testmode.'" />		
 					<input type="hidden" name="md5check" value="'.$md5check.'" />
 					<input type="submit" value="'.$this->settings['quickpay_paybuttontext'].'" />
 				</form>
@@ -461,12 +471,14 @@ function init_quickpay_gateway() {
 								$this->api_action_recurring();
 						}	
 						
-						if($response->msgtype === 'subscribe') 
-							WC_Subscriptions_Manager::activate_subscriptions_for_order( $this->order );					
+						if($response->msgtype === 'subscribe') {
+							$this->order->payment_complete();		
+						}
 
 					} else {
-						$this->order->update_status('processing');
-						$this->order->reduce_order_stock();
+						$this->order->payment_complete();
+						//$this->order->update_status('processing');
+						//$this->order->reduce_order_stock();
 						$this->note( __('Payment authorized', 'woo-quickpay') );
 					}
 				} else {
@@ -999,6 +1011,7 @@ function init_quickpay_gateway() {
 	function add_quickpay_gateway( $methods ) {
 		$methods[] = 'WC_Quickpay'; return $methods;
 	}
+	add_filter('plugin_action_links_' . plugin_basename( __FILE__ ), 'WC_Quickpay::action_links'  );
 	add_filter('woocommerce_payment_gateways', 'add_quickpay_gateway' );	
 }
 
