@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Quickpay
 Plugin URI: http://wordpress.org/plugins/woocommerce-quickpay/
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 2.1.4 
+Version: 2.1.5 
 Author: Perfect Solution
 Text Domain: woo-quickpay
 Author URI: http://perfect-solution.dk
@@ -382,9 +382,30 @@ function init_quickpay_gateway() {
 
 			echo '	<input type="hidden" name="testmode" value="'.$this->gateway->testmode.'" />		
 					<input type="hidden" name="md5check" value="'.$md5check.'" />
-					<input type="submit" value="'.$this->settings['quickpay_paybuttontext'].'" />
+					<input type="submit" value="'.$this->settings['quickpay_paybuttontext'].'" />';
+
+
+			if(isset($this->settings['quickpay_paii_category'])) {
+				$order_vats = $this->order->get_tax_totals();
+
+				if( ! empty( $order_vats ) ) {
+					$total_vat = 0;
+
+					foreach( $order_vats as $key => $value ) {
+						$total_vat += $value->amount;
+					} 
+					
+					echo   '<input type="hidden" name="CUSTOM_reference_title" value="'. $ordernumber .'" />
+						<input type="hidden" name="CUSTOM_category" value="' . $this->settings['quickpay_paii_category'] . '" />
+						<input type="hidden" name="CUSTOM_product_id" value="P03" />
+						<input type="hidden" name="CUSTOM_vat_amount" value="' . $total_vat .'" />';				
+					} 
+			}
+
+			echo '
 				</form>
 			';
+
 		}
 
 		public function on_order_cancellation($order_id) {
@@ -638,6 +659,48 @@ function init_quickpay_gateway() {
 									'label' => __( 'Enable/Disable', 'woo-quickpay' ), 
 									'description' => __( 'Allows your customers to choose between viaBill and credit card when choosing type of payment. <b>(Requires viaBill agreement)</b>', 'woo-quickpay' ), 
 									'default' => 'no'
+					),
+					'quickpay_paii_category' => array(
+						'title' => __( 'Paii service category', 'woo-quickpay'),
+						'type' => 'select',
+						'description' => __( 'This option is used to describe what kind of services your shop is offering. This is only required when using Paii as merchant.', 'woo-quickpay'),
+						'options' => array(
+							''	   => '',
+							'SC00' => 'Ringetoner, baggrundsbilleder m.v.',
+							'SC01' => 'Videoklip og	tv',
+							'SC02' => 'Erotik og voksenindhold',
+							'SC03' => 'Musik, sange og albums',
+							'SC04' => 'Lydbøger	og podcasts',
+							'SC05' => 'Mobil spil',
+							'SC06' => 'Chat	og dating',
+							'SC07' => 'Afstemning og konkurrencer',
+							'SC08' => 'Mobil betaling',
+							'SC09' => 'Nyheder og information',
+							'SC10' => 'Donationer',
+							'SC11' => 'Telemetri og service sms',
+							'SC12' => 'Diverse',
+							'SC13' => 'Kiosker & små købmænd',
+							'SC14' => 'Dagligvare, Fødevarer & non-food',
+							'SC15' => 'Vin & tobak',
+							'SC16' => 'Apoteker	og medikamenter',
+							'SC17' => 'Tøj, sko og accessories',
+							'SC18' => 'Hus, Have, Bolig og indretning',
+							'SC19' => 'Bøger, papirvare	og kontorartikler',
+							'SC20' => 'Elektronik, Computer & software',
+							'SC21' => 'Øvrige forbrugsgoder',
+							'SC22' => 'Hotel, ophold, restaurant, cafe & værtshuse, Kantiner og catering',
+							'SC24' => 'Kommunikation og konnektivitet, ikke via telefonregning',
+							'SC25' => 'Kollektiv trafik',
+							'SC26' => 'Individuel trafik (Taxikørsel)',
+							'SC27' => 'Rejse (lufttrafik, rejser, rejser med ophold)',
+							'SC28' => 'Kommunikation og konnektivitet, via telefonregning',
+							'SC29' => 'Serviceydelser',
+							'SC30' => 'Forlystelser og underholdning, ikke digital',
+							'SC31' => 'Lotteri- og anden spillevirksomhed',
+							'SC32' => 'Interesse- og hobby (Motion, Sport, udendørsaktivitet, foreninger, organisation)',
+							'SC33' => 'Personlig pleje (Frisør, skønhed, sol og helse)',
+							'SC34' => 'Erotik	og	voksenprodukter(fysiske	produkter)',
+						),
 					),
 
 				'_Shop_setup' => array(

@@ -3,8 +3,8 @@ Contributors: PerfectSolution
 Donate link: http://perfect-solution.dk/donation
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration, woocommerce, woocommerce quickpay, payment, payment gateway
 Requires at least: 3.5.0
-Tested up to: 3.8.1
-Stable tag: 2.1.4
+Tested up to: 3.9.0
+Stable tag: 2.1.5
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,6 +22,9 @@ With WooCommerce Quickpay, you are able to integrate your Quickpay gateway to yo
 6. You are good to go.
 
 == Changelog ==
+= 2.1.5 =
+* Added support for Paii
+
 = 2.1.4 =
 * Added action links to "Installed plugins" overview
 * Fixed md5 checksum error caused by testmode
