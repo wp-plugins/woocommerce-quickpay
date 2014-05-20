@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Quickpay
 Plugin URI: http://wordpress.org/plugins/woocommerce-quickpay/
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 2.1.5 
+Version: 2.1.6
 Author: Perfect Solution
 Text Domain: woo-quickpay
 Author URI: http://perfect-solution.dk
@@ -477,7 +477,9 @@ function init_quickpay_gateway() {
 				if(WC_Quickpay_API::validate_response($response, $this->settings['quickpay_md5secret'])) {
 
 					// Add transaction fee
-					$this->add_order_transaction_fee( $response->amount );
+					if( isset( $response->fee ) ) {
+						$this->add_order_transaction_fee( $this->order, $response->fee );
+					}
 
 					if($subscription) {
 						// Calculates the total amount to be charged at the outset of the Subscription taking into account sign-up fees, 
@@ -969,19 +971,17 @@ function init_quickpay_gateway() {
 			);
 		}
 
-		public function add_order_transaction_fee( $transaction_total ) {
-			$order_total = $this->order->get_order_total() ;
+		public function add_order_transaction_fee( $order, $fee ) {
+			$order_total = $order->get_order_total() ;
 			$order_total_formated = $this->format_price( $order_total );
 
-			if( $transaction_total > $order_total ) {
-				$transaction_fee = $transaction_total - $order_total_formated;
-
-				$order_total_updated = $order_total_formated + $transaction_fee;
+			if( $fee > 0) {
+				$order_total_updated = $order_total_formated + $fee;
 				$order_total_updated = $this->deformat_price( $order_total_updated );
 
-				$transaction_fee = $this->deformat_price( $transaction_fee );
+				$transaction_fee = $this->deformat_price( $fee );
 
-				$order_meta_item_id = woocommerce_add_order_item( $this->order->id,  array(
+				$order_meta_item_id = woocommerce_add_order_item( $order->id,  array(
 					'order_item_name' => __( 'Payment Fee', 'woo-quickpay' ),
 					'order_item_type' => 'fee'
 				));
@@ -989,7 +989,7 @@ function init_quickpay_gateway() {
 				woocommerce_add_order_item_meta( $order_meta_item_id, '_tax_class', '', TRUE );
 				woocommerce_add_order_item_meta( $order_meta_item_id, '_line_total', $transaction_fee, TRUE );
 				woocommerce_add_order_item_meta( $order_meta_item_id, '_line_tax', 0, TRUE );
-				update_post_meta( $this->order->id, '_order_total', woocommerce_format_total( $order_total_updated ) );
+				update_post_meta( $order->id, '_order_total', woocommerce_format_total( $order_total_updated ) );
 
 				return TRUE;
 			}
