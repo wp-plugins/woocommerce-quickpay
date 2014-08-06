@@ -3,7 +3,7 @@ Contributors: PerfectSolution
 Donate link: http://perfect-solution.dk/donation
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration, woocommerce, woocommerce quickpay, payment, payment gateway
 Requires at least: 3.5.0
-Tested up to: 3.9.0
+Tested up to: 3.9.2
 Stable tag: 2.1.6
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -25,7 +25,7 @@ With WooCommerce Quickpay, you are able to integrate your Quickpay gateway to yo
 = 3.0.0 =
 * Completely refactored the plugin. The logic has been splitted into multiple classes, and a lot of bugs should've been eliminated with this version.
 * Added ajax calls when using the API
- 
+
 = 2.1.6 = 
 * Optimized fee handling
 
