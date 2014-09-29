@@ -296,9 +296,9 @@ function init_quickpay_gateway() {
 		{
 			global $woocommerce;
 
-			$woocommerce->cart->empty_cart();
+			//$woocommerce->cart->empty_cart();
 
-			$order = new WC_Order( $order_id );
+			$order = new WC_Quickpay_Order( $order_id );
 
 			$gwType = NULL;
 
@@ -310,7 +310,7 @@ function init_quickpay_gateway() {
 
 			return array(
 				'result' 	=> 'success',
-				'redirect'	=>  add_query_arg( 'gwType', $gwType, $order->get_checkout_payment_url( TRUE ) )
+				'redirect'	=>  apply_filters( 'woocommerce_quickpay_process_payment', add_query_arg( 'gwType', $gwType, $order->get_checkout_payment_url( TRUE ) ), $order, $this->settings, $_POST )
 			);	
 		}
 
@@ -760,6 +760,101 @@ function init_quickpay_gateway() {
 	add_filter('woocommerce_payment_gateways', 'add_quickpay_gateway' );	
 	
 	add_filter('plugin_action_links_' . plugin_basename( __FILE__ ), 'WC_Quickpay::add_action_links'  );
+
+	add_filter('woocommerce_quickpay_process_payment', 'test_filter', 10, 4);
+
+	function test_filter($url, $order, $settings, $post_object) {
+			$url = 'https://secure.quickpay.dk/form/';
+
+			$is_subscription	= FALSE;
+
+			if( WC_Quickpay_Helper::subscription_is_active() ) {
+				$is_subscription = WC_Subscriptions_Order::order_contains_subscription( $order );
+			}
+
+			$ordernumber 		= WC_Quickpay_Helper::prefix_order_number( $order->get_clean_order_number() );
+			$continueurl		= $order->get_continue_url();
+			$cancelurl			= $order->get_cancellation_url();
+			$callbackurl		= $order->get_callback_url();
+			$merchant_id 		= $settings[ 'quickpay_merchantid' ];
+			$test_mode 			= WC_Quickpay_Helper::option_is_enabled( $settings[ 'quickpay_testmode'] );
+			$autocapture 		= WC_Quickpay_Helper::option_is_enabled( $settings[ 'quickpay_autocapture'] );
+			$splitcapture 		= $is_subscription ? '' : WC_Quickpay_Helper::option_is_enabled( $settings[ 'quickpay_splitcapture' ] );
+			$currency 			= $settings[ 'quickpay_currency' ];
+			$language 			= $$settings[ 'quickpay_language' ];
+			$msgtype			= $is_subscription ? 'subscribe' : 'authorize';
+			$amount				= WC_Quickpay_Helper::price_multiply( $is_subscription ? WC_Subscriptions_Order::get_total_initial_payment( $order ) : $order->order_total );
+			$description		= $is_subscription ? 'qp_subscriber' : '';
+
+			if( WC_Quickpay_Helper::option_is_enabled( $settings[ 'quickpay_ibillOrCreditcard' ] ) AND isset( $post_object['gwType'] )  AND ( strtolower( $post_object['gwType'] ) === 'viabill' ) ) {
+				$cardtypelock = strtolower( $post_object['gwType'] );
+			} else {
+				$cardtypelock = $settings['quickpay_cardtypelock' ];
+			}
+
+			$md5check = md5(
+				WC_Quickpay_Request::$protocol . $msgtype . $merchant_id . $language . $ordernumber	. $amount . $currency . $continueurl . $cancelurl 
+				. $callbackurl . $autocapture . $cardtypelock . $splitcapture .  $description . $test_mode . $settings[ 'quickpay_md5secret' ]
+			);
+
+			$params = array(
+				'protocol' 		=> WC_Quickpay_Request::$protocol,
+				'msgtype'		=> $msgtype,
+				'merchant'		=> $merchant_id,
+				'language'		=> $language,
+				'ordernumber'	=> $ordernumber,
+				'amount'		=> $amount,
+				'currency'		=> $currency,
+				'continueurl'	=> $continueurl,
+				'cancelurl'		=> $cancelurl,
+				'callbackurl'	=> $callbackurl,
+				'autocapture'	=> $autocapture,
+				'cardtypelock'	=> $cardtypelock
+			);
+
+			if( ! $is_subscription ) {
+				$params['splitpayment'] = $splitcapture;
+			}
+
+			if ( $is_subscription ) {
+				$params['description'] = $description;
+			}
+
+			$params['testmode'] = $test_mode;
+			$params['md5check'] = $md5check;
+
+			$url .= '?' . http_build_query($params);
+			error_log($url);
+			return $url;
+/*
+			echo "
+				<form id=\"quickpay_payment_form\" action=\"https://secure.quickpay.dk/form/\" method=\"post\">
+					<input type=\"hidden\" name=\"protocol\" value=\"" . WC_Quickpay_Request::$protocol . "\" />
+					<input type=\"hidden\" name=\"msgtype\" value=\"{$msgtype}\" />
+					<input type=\"hidden\" name=\"merchant\" value=\"{$merchant_id}\" />
+					<input type=\"hidden\" name=\"language\" value=\"{$language}\" />
+					<input type=\"hidden\" name=\"ordernumber\" value=\"{$ordernumber}\" />
+					<input type=\"hidden\" name=\"amount\" value=\"{$amount}\" />
+					<input type=\"hidden\" name=\"currency\" value=\"{$currency}\" />
+					<input type=\"hidden\" name=\"continueurl\" value=\"{$continueurl}\" />
+					<input type=\"hidden\" name=\"cancelurl\" value=\"{$cancelurl}\" />
+					<input type=\"hidden\" name=\"callbackurl\" value=\"{$callbackurl}\" />
+					<input type=\"hidden\" name=\"autocapture\" value=\"{$autocapture}\" />
+					<input type=\"hidden\" name=\"cardtypelock\" value=\"{$cardtypelock}\" />";
+
+			if( ! $is_subscription ) {
+				echo "<input type=\"hidden\" name=\"splitpayment\" value=\"{$splitcapture}\" />";
+			}
+			
+			if( $is_subscription ) {
+				echo"<input type=\"hidden\" name=\"description\" value=\"{$description}\" />";
+			}
+
+			echo "	<input type=\"hidden\" name=\"testmode\" value=\"{$test_mode}\" />		
+					<input type=\"hidden\" name=\"md5check\" value=\"{$md5check}\" />
+					<input type=\"submit\" value=\"". $this->s('quickpay_paybuttontext') . "\" />
+				</form>";*/
+	}
 }
 
 ?>
