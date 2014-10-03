@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Quickpay
 Plugin URI: http://wordpress.org/plugins/woocommerce-quickpay/
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 3.0.2
+Version: 3.0.3
 Author: Perfect Solution
 Text Domain: woo-quickpay
 Author URI: http://perfect-solution.dk
@@ -101,12 +101,13 @@ function init_quickpay_gateway() {
 		    add_action( 'scheduled_subscription_payment_' . $this->id, array( $this, 'scheduled_subscription_payment' ), 10, 3 );
 		    add_action( 'woocommerce_api_wc_' . $this->id, array( $this, 'callback_handler' ) );    
 		    add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
+			add_action( 'woocommerce_receipt_' . $this->id, 'WC_Quickpay_Helper::enqueue_javascript_redirect' );
 		    add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 2 );
 		    add_action( 'cancelled_subscription_' . $this->id, array( $this, 'subscription_cancellation') )	;
 
 			if( is_admin() ) {
 			    add_action( 'admin_menu', 'WC_Quickpay_Helper::enqueue_stylesheet' );
-			    add_action( 'admin_menu', 'WC_Quickpay_Helper::enqueue_javascript' );
+			    add_action( 'admin_menu', 'WC_Quickpay_Helper::enqueue_javascript_backend' );
 		    	add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		    	add_action( 'woocommerce_order_status_completed', array( $this, 'woocommerce_order_status_completed' ) );  
 		    	add_action( 'woocommerce_order_status_refunded', array( $this, 'woocommerce_order_status_refunded' ) );  
@@ -114,6 +115,7 @@ function init_quickpay_gateway() {
 				add_action( 'wp_ajax_quickpay_manual_transaction_actions', array( $this, 'quickpay_manual_transaction_actions' ) );	
 
 		    	add_filter( 'manage_shop_order_posts_custom_column', array( $this, 'apply_custom_order_data' ) );
+		    	add_filter( 'woocommerce_gateway_icon', array( $this, 'apply_gateway_icons' ), 2, 3 );
 			}	
 		}
 
@@ -727,8 +729,8 @@ function init_quickpay_gateway() {
 							echo "<ul>
 									<li>
 										<p>
-											<span><a id=\"quickpay_split_button\" data-action=\"split_capture\" style=\"display:none;\" class=\"button\" data-notify=\"", __( 'You are about to SPLIT CAPTURE this payment. This means that you will capture the amount stated in the input field. The payment state will remain open.' ), "\" href=\"" . admin_url('post.php?post={$post->ID}&action=edit&quickpay_action=splitcapture') . "\">" . __( 'Split Capture', 'woo-quickpay' ) . "</a></span>
-											<span><a id=\"quickpay_split_finalize_button\" data-action=\"split_finalize\" style=\"display:none;\" class=\"button\" data-notify=\"", __( 'You are about to SPLIT CAPTURE and FINALIZE this payment. This means that you will capture the amount stated in the input field and that you can no longer capture money from this transaction.' ), "\" href=\"" . admin_url( 'post.php?post={$post->ID}&action=edit&quickpay_action=splitcapture&quickpay_finalize=yes' ) . "\">" . __( 'Split and finalize', 'woo-quickpay' ) . "</a></span>
+											<span><a id=\"quickpay_split_button\" data-action=\"split_capture\" style=\"display:none;\" class=\"button\" data-notify=\"", __( 'You are about to SPLIT CAPTURE this payment. This means that you will capture the amount stated in the input field. The payment state will remain open.', 'woo-quickpay' ), "\" href=\"" . admin_url( 'post.php?post={$post->ID}&action=edit&quickpay_action=splitcapture' ) . "\">" . __( 'Split Capture', 'woo-quickpay' ) . "</a></span>
+											<span><a id=\"quickpay_split_finalize_button\" data-action=\"split_finalize\" style=\"display:none;\" class=\"button\" data-notify=\"", __( 'You are about to SPLIT CAPTURE and FINALIZE this payment. This means that you will capture the amount stated in the input field and that you can no longer capture money from this transaction.', 'woo-quickpay' ), "\" href=\"" . admin_url( 'post.php?post={$post->ID}&action=edit&quickpay_action=splitcapture&quickpay_finalize=yes' ) . "\">" . __( 'Split and finalize', 'woo-quickpay' ) . "</a></span>
 										</p>
 									</li>
 								  </ul>
@@ -793,6 +795,34 @@ function init_quickpay_gateway() {
 					echo "<small class=\"meta woocommerce-quickpay-{$status}\">Payment state: " . WC_Quickpay_Helper::format_msgtype( $status ) . "</small>";
 				}
 			}		
+		}
+		/**
+		 * 
+		* FILTER: apply_gateway_icons function.
+		*
+		* Sets gateway icons on frontend
+		*
+		* @access public
+		* @return void
+		*/	
+		public function apply_gateway_icons( $icon, $id ) {
+
+			if($id == $this->id) {
+				$icon = '';
+				$icons = $this->s('quickpay_icons');
+
+				if( ! empty( $icons ) ) {
+					$settings_icons_maxheight = $this->s( 'quickpay_icons_maxheight' );
+					$icons_maxheight = ! empty( $settings_icons_maxheight ) ? $settings_icons_maxheight . 'px' : '20px';
+
+					foreach( $icons as $key => $item ) {
+						$icon_url = WC_HTTPS::force_https_url( plugin_dir_url( __FILE__ ) . 'assets/images/cards/' . $item . '.png' );
+						$icon .= '<img src="' . $icon_url . '" alt="' . esc_attr( $this->get_title() ) . '" style="max-height:' . $icons_maxheight . '"/>';
+					}
+				}
+			}
+
+			return $icon;
 		}
 	}
 

@@ -53,7 +53,7 @@ class WC_Quickpay_Settings {
 					'quickpay_md5secret' => array(
 									'title' => __('Secret MD5 string', 'woo-quickpay'),
 									'type' => 'text',
-									'description' => __('This is the unique MD5 secret key, which the system uses to verify your transactions.')
+									'description' => __('This is the unique MD5 secret key, which the system uses to verify your transactions.', 'woo-quickpay' )
 					),
 					'quickpay_apikey' => array(
 						'title' => __('Quickpay API key', 'woo-quickpay'),
@@ -176,6 +176,37 @@ class WC_Quickpay_Settings {
 									'description' => __( 'Label shown when choosing credit card or viaBill.', 'woo-quickpay' ), 
 									'default' => __( 'viaBill', 'woo-quickpay' )
 								),
+					'quickpay_icons' => array(
+									'title' => __( 'Credit card icons', 'woo-quickpay' ),
+									'type' => 'multiselect',
+									'description' => __( 'Choose the card icons you wish to show next to the Quickpay payment option in your shop.', 'woo-quickpay' ),
+									'default' => '',
+									'options' => array(
+										'dankort' => 'Dankort',
+										'edankort' => 'eDankort',
+										'visa'	=> 'Visa',
+										'visaelectron' => 'Visa Electron',
+										'mastercard' => 'Mastercard',
+										'maestro' => 'Maestro',
+										'jcb' => 'JCB',
+										'americanexpress' => 'American Express',
+										'diners' => 'Diner\'s Club',
+										'discovercard' => 'Discover Card',
+										'viabill' => 'ViaBill',
+										'paypal' => 'Paypall',
+										'danskebank' => 'Danske Bank',
+										'nordea' => 'Nordea',
+										'paii' => 'Paii',
+										'mobilepay' => 'MobilePay',
+										'forbrugsforeningen' => 'Forbrugsforeningen'
+									)
+					),
+					'quickpay_icons_maxheight' => array(
+						'title' => __( 'Credit card icons maximum height', 'woo-quickpay' ),
+						'type'  => 'number',
+						'description' => __( 'Set the maximum pixel height of the credit card icons shown on the frontend.', 'woo-quickpay' ),
+						'default' => 20
+					),
 					'quickpay_redirectText' => array(
 									'title' => __( 'Redirect message', 'woo-quickpay' ), 
 									'type' => 'textarea', 

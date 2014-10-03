@@ -79,14 +79,25 @@ class WC_Quickpay_Helper {
 
 
 	/**
-	* enqueue_javascript function.
+	* enqueue_javascript_backend function.
 	*
 	* @access public static
 	* @return string
 	*/
-	public static function enqueue_javascript() {
-	    wp_enqueue_script( 'quickpay-core', plugins_url( '/assets/javascript/core.js', dirname( __FILE__ ) ), array( 'jquery' ) );
-	    wp_localize_script( 'quickpay-core', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+	public static function enqueue_javascript_backend() {
+	    wp_enqueue_script( 'quickpay-backend', plugins_url( '/assets/javascript/backend.js', dirname( __FILE__ ) ), array( 'jquery' ) );
+	    wp_localize_script( 'quickpay-backend', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+	}
+
+
+	/**
+	* enqueue_javascript_redirect function.
+	*
+	* @access public static
+	* @return string
+	*/
+	public static function enqueue_javascript_redirect() {
+	    wp_enqueue_script( 'quickpay-redirect', plugins_url( '/assets/javascript/redirect.js', dirname( __FILE__ ) ), array( 'jquery' ) );
 	}
 
 
