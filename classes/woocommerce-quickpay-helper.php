@@ -1,8 +1,8 @@
 <?php
 /**
- * WC_Quickpay_Request class
+ * WC_Quickpay_Helper class
  *
- * @class 		WC_Quickpay_Request
+ * @class 		WC_Quickpay_Helper
  * @version		1.0.0
  * @package		Woocommerce_Quickpay/Classes
  * @category	Class

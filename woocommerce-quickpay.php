@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Quickpay
 Plugin URI: http://wordpress.org/plugins/woocommerce-quickpay/
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 3.0.3
+Version: 3.0.4
 Author: Perfect Solution
 Text Domain: woo-quickpay
 Author URI: http://perfect-solution.dk
@@ -428,8 +428,8 @@ function init_quickpay_gateway() {
 			$test_mode 			= WC_Quickpay_Helper::option_is_enabled( $this->s( 'quickpay_testmode') );
 			$autocapture 		= WC_Quickpay_Helper::option_is_enabled( $this->s( 'quickpay_autocapture') );
 			$splitcapture 		= $is_subscription ? '' : WC_Quickpay_Helper::option_is_enabled( $this->s( 'quickpay_splitcapture' ) );
-			$currency 			= $this->s( 'quickpay_currency' );
-			$language 			= $this->s( 'quickpay_language' );
+			$currency 			= $this->get_gateway_currency();
+			$language 			= $this->get_gateway_language();
 			$msgtype			= $is_subscription ? 'subscribe' : 'authorize';
 			$amount				= WC_Quickpay_Helper::price_multiply( $is_subscription ? WC_Subscriptions_Order::get_total_initial_payment( $order ) : $order->order_total );
 			$description		= $is_subscription ? 'qp_subscriber' : '';
@@ -713,7 +713,7 @@ function init_quickpay_gateway() {
 
 				if( WC_Quickpay_Helper::option_is_enabled( $this->s( 'quickpay_splitcapture' ) ) )
 				{
-					$currency = $this->s( 'quickpay_currency' );
+					$currency = $this->get_gateway_currency();
 
 					if( $api->is_action_allowed( 'splitcapture', $state ) AND $balance < WC_Quickpay_Helper::price_multiply( $order->order_total ) )
 					{
@@ -796,6 +796,7 @@ function init_quickpay_gateway() {
 				}
 			}		
 		}
+
 		/**
 		 * 
 		* FILTER: apply_gateway_icons function.
@@ -823,6 +824,36 @@ function init_quickpay_gateway() {
 			}
 
 			return $icon;
+		}
+
+
+		/**
+		* 
+		* get_gateway_currency
+		*
+		* Returns the gateway currency
+		*
+		* @access public
+		* @return void
+		*/	
+		public function get_gateway_currency() {
+			$currency = apply_filters( 'woocommerce_quickpay_currency', $this->s( 'quickpay_currency' ) );
+			return $currency;
+		}
+
+
+		/**
+		* 
+		* get_gateway_language
+		*
+		* Returns the gateway language
+		*
+		* @access public
+		* @return void
+		*/	
+		public function get_gateway_language() {
+			$language = apply_filters( 'woocommerce_quickpay_language', $this->s( 'quickpay_language' ) );
+			return $language;
 		}
 	}
 
