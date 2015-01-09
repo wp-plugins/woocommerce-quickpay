@@ -41,7 +41,7 @@ class WC_Quickpay_Order extends WC_Order {
 	* @return string
 	*/	
 	public function get_cancellation_url() {
-		if( method_exists( $this->order, 'get_cancel_order_url' ) ) {
+		if( method_exists( $this, 'get_cancel_order_url' ) ) {
 			return str_replace( '&amp;', '&', $this->get_cancel_order_url() );
 		}
 
