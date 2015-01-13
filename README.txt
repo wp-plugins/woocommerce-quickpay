@@ -3,8 +3,8 @@ Contributors: PerfectSolution
 Donate link: http://perfect-solution.dk/donation
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration, woocommerce, woocommerce quickpay, payment, payment gateway
 Requires at least: 3.5.0
-Tested up to: 4.0.0
-Stable tag: 3.0.4
+Tested up to: 4.0.1
+Stable tag: 3.0.6
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,6 +22,12 @@ With WooCommerce Quickpay, you are able to integrate your Quickpay gateway to yo
 6. You are good to go.
 
 == Changelog ==
+
+= 3.0.6 = 
+* Added proper support for both Sequential Order Numbers FREE and Sequential Order Numbers PRO.
+
+= 3.0.5 =
+* Bugfix: 502 on checkout on shops hosted with wpengine.com. 
 
 = 3.0.4 =
 * Add filter 'woocommerce_quickpay_currency' which can be used to dynamically edit the gateway currency

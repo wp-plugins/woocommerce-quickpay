@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Quickpay
 Plugin URI: http://wordpress.org/plugins/woocommerce-quickpay/
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 3.0.4
+Version: 3.0.6
 Author: Perfect Solution
 Text Domain: woo-quickpay
 Author URI: http://perfect-solution.dk
@@ -588,20 +588,36 @@ function init_quickpay_gateway() {
 		public function find_order_by_order_number( $order_number )
 		{	
 			$order_id = null;	
+			$post_status = array_keys( wc_get_order_statuses() );
 
 			// search for the order by custom order number
 			$query_args = array(
-						'numberposts' => 1,
-						'meta_key'    => '_order_number',
-						'meta_value'  => $order_number,
-						'post_type'   => 'shop_order',
-						'post_status' => 'publish',
-						'fields'      => 'ids'
-					);
+				'numberposts' => 1,
+				'meta_key'    => '_order_number',
+				'meta_value'  => $order_number,
+				'post_type'   => 'shop_order',
+				'post_status' => $post_status,
+				'fields'      => 'ids'
+			);
 			
 			$post = get_posts( $query_args );
 			if( ! empty( $post ) ) {
 				list( $order_id ) = $post;
+			} else {
+				// search for the order by custom order number formatted. Used in Sequential Order Numbers Pro
+				$query_args = array(
+					'numberposts' => 1,
+					'meta_key'    => '_order_number_formatted',
+					'meta_value'  => $order_number,
+					'post_type'   => 'shop_order',
+					'post_status' => $post_status,
+					'fields'      => 'ids'
+				);		
+
+				$post = get_posts( $query_args );
+				if( ! empty( $post ) ) {
+					list( $order_id ) = $post;
+				}	
 			}
 			
 			// order was found
@@ -609,9 +625,8 @@ function init_quickpay_gateway() {
 			
 			// if we didn't find the order, then it may be that this plugin was disabled and an order was placed in the interim
 			$order = new WC_Order( $order_number );
-			if ( isset( $order->order_custom_fields['_order_number'][0] ) )
-			{
-				// _order_number was set, so this is not an old order, it's a new one that just happened to have post_id that matched the searched-for order_number
+			if ( isset( $order->order_custom_fields['_order_number'][0] ) || isset( $order->order_custom_fields['_order_number_formatted'][0] ) ) {
+				// _order_number OR _order_number_formatted was set, so this is not an old order, it's a new one that just happened to have post_id that matched the searched-for order_number
 				return 0;
 			}
 			
