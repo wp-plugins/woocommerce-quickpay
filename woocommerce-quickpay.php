@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Quickpay
 Plugin URI: http://wordpress.org/plugins/woocommerce-quickpay/
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 3.0.7
+Version: 3.0.8
 Author: Perfect Solution
 Text Domain: woo-quickpay
 Author URI: http://perfect-solution.dk
@@ -431,7 +431,7 @@ function init_quickpay_gateway() {
 			$currency 			= $this->get_gateway_currency();
 			$language 			= $this->get_gateway_language();
 			$msgtype			= $is_subscription ? 'subscribe' : 'authorize';
-			$amount				= WC_Quickpay_Helper::price_multiply( $is_subscription ? WC_Subscriptions_Order::get_total_initial_payment( $order ) : $order->order_total );
+			$amount				= WC_Quickpay_Helper::price_multiply( $is_subscription ? WC_Subscriptions_Order::get_total_initial_payment( $order ) : $order->get_total() );
 			$description		= $is_subscription ? 'qp_subscriber' : '';
 
 			if( WC_Quickpay_Helper::option_is_enabled( $this->s( 'quickpay_ibillOrCreditcard' ) ) AND isset( $_GET['gwType'] )  AND ( strtolower( $_GET['gwType'] ) === 'viabill' ) ) {
@@ -730,14 +730,14 @@ function init_quickpay_gateway() {
 				{
 					$currency = $this->get_gateway_currency();
 
-					if( $api->is_action_allowed( 'splitcapture', $state ) AND $balance < WC_Quickpay_Helper::price_multiply( $order->order_total ) )
+					if( $api->is_action_allowed( 'splitcapture', $state ) AND $balance < WC_Quickpay_Helper::price_multiply( $order->get_total() ) )
 					{
 						echo "<div class=\"quickpay-split-container\">";
 							echo "<h4><strong>" . __( 'Split payment', 'woo-quickpay' ) . "</strong></h4>";
 							echo "<div class=\"totals_groups\">";
 								echo "<h4><span class=\"inline_total\">{$currency}</span>" . __( 'Currency', 'woo-quickpay' ) . "</h4>";
 								echo "<h4><span class=\"quickpay-balance inline_total\">" . WC_Quickpay_Helper::price_normalize( $balance ) ."</span>" .  __( 'Balance', 'woo-quickpay' ) . "</h4>";
-								echo "<h4><span class=\"quickpay-remaining inline_total\">" . WC_Quickpay_Helper::price_normalize( WC_Quickpay_Helper::price_multiply( $order->order_total )  - $balance ) ."</span>" .  __( 'Remaining', 'woo-quickpay' ) . "</h4>";
+								echo "<h4><span class=\"quickpay-remaining inline_total\">" . WC_Quickpay_Helper::price_normalize( WC_Quickpay_Helper::price_multiply( $order->get_total() )  - $balance ) ."</span>" .  __( 'Remaining', 'woo-quickpay' ) . "</h4>";
 								echo "<h4><span class=\"quickpay-remaining inline_total\"><input type=\"text\" style=\"width:50px;text-align:right;\" id=\"quickpay_split_amount\" name=\"quickpay_split_amount\" /></span><strong>" .  __( 'Amount to capture', 'woo-quickpay' ) . "</strong></h4>";
 							echo "</div>";
 
