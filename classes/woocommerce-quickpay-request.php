@@ -3,7 +3,7 @@
  * WC_Quickpay_Request class
  *
  * @class 		WC_Quickpay_Request
- * @version		1.0.0
+ * @version		1.0.1
  * @package		Woocommerce_Quickpay/Classes
  * @category	Class
  * @author 		PerfectSolution
@@ -147,7 +147,7 @@ class WC_Quickpay_Request {
 	* @return void
 	*/
 	public function do_capture() {
-		$response = $this->do_request( $this->set_request_params( 'capture', array( 'amount' => WC_Quickpay_Helper::price_multiply( $this->order->order_total ), 'finalize' => 1 ) ) );
+		$response = $this->do_request( $this->set_request_params( 'capture', array( 'amount' => WC_Quickpay_Helper::price_multiply( $this->order->get_total() ), 'finalize' => 1 ) ) );
 		
 		if( ! is_wp_error($response)) {
 			$this->order->note('Payment captured.');
@@ -214,7 +214,7 @@ class WC_Quickpay_Request {
 	* @return void
 	*/
 	public function do_refund() {
-		$response = $this->do_request( $this->set_request_params( 'refund', array( 'amount' => WC_Quickpay_Helper::price_multiply( $this->order->order_total ) ) ) );
+		$response = $this->do_request( $this->set_request_params( 'refund', array( 'amount' => WC_Quickpay_Helper::price_multiply( $this->order->get_total() ) ) ) );
 		if( ! is_wp_error( $response ) ) {
 			$this->order->note( __( 'Payment refunded', 'woo-quickpay' ) );
 			return TRUE;

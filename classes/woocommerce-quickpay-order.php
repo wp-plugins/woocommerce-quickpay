@@ -64,7 +64,7 @@ class WC_Quickpay_Order extends WC_Order {
 	* @return string
 	*/	
 	public function get_callback_url() {
-		return str_replace( 'https:', 'http:', add_query_arg( 'wc-api', 'WC_Quickpay', home_url( '/' ) ) );
+		return add_query_arg( 'wc-api', 'WC_Quickpay', home_url( '/' ) );
 	}
 
 
