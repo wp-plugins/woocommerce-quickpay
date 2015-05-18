@@ -3,8 +3,8 @@ Contributors: PerfectSolution
 Donate link: http://perfect-solution.dk/donation
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration, woocommerce, woocommerce quickpay, payment, payment gateway
 Requires at least: 3.5.0
-Tested up to: 4.0.1
-Stable tag: 3.0.8
+Tested up to: 4.2.2
+Stable tag: 3.0.9
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,6 +22,10 @@ With WooCommerce Quickpay, you are able to integrate your Quickpay gateway to yo
 6. You are good to go.
 
 == Changelog ==
+
+= 3.0.9 = 
+* Add support for important update notifications fetched from the README.txt file.
+
 = 3.0.8 = 
 * Switched to WC_Order::get_total() instead of WC_Order::order_total to fix issues with WPML currencies.
 
@@ -189,3 +193,5 @@ With WooCommerce Quickpay, you are able to integrate your Quickpay gateway to yo
 
 = 1.0.1 =
 *  Bugfix: Corrected a few unchecked variables that caused php notices in error logs.
+
+== Upgrade Notice ==

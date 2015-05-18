@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Quickpay
 Plugin URI: http://wordpress.org/plugins/woocommerce-quickpay/
 Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 3.0.8
+Version: 3.0.9
 Author: Perfect Solution
 Text Domain: woo-quickpay
 Author URI: http://perfect-solution.dk
@@ -14,7 +14,9 @@ add_action('plugins_loaded', 'init_quickpay_gateway', 0);
 function init_quickpay_gateway() {
 
 	if ( ! class_exists( 'WC_Payment_Gateway' )) { return; }
-
+    
+    define( 'WCQP_VERSION', '3.0.9' );
+    
 	// Import helper classes
 	require_once( 'classes/woocommerce-quickpay-helper.php' );
 	require_once( 'classes/woocommerce-quickpay-settings.php' );
@@ -104,6 +106,7 @@ function init_quickpay_gateway() {
 			add_action( 'woocommerce_receipt_' . $this->id, 'WC_Quickpay_Helper::enqueue_javascript_redirect' );
 		    add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 2 );
 		    add_action( 'cancelled_subscription_' . $this->id, array( $this, 'subscription_cancellation') )	;
+            add_action( 'in_plugin_update_message-woocommerce-quickpay/woocommerce-quickpay.php', array( __CLASS__, 'in_plugin_update_message' ) );
 
 			if( is_admin() ) {
 			    add_action( 'admin_menu', 'WC_Quickpay_Helper::enqueue_stylesheet' );
@@ -870,24 +873,85 @@ function init_quickpay_gateway() {
 			$language = apply_filters( 'woocommerce_quickpay_language', $this->s( 'quickpay_language' ) );
 			return $language;
 		}
+        
+        
+ 		/**
+		* 
+		* in_plugin_update_message
+		*
+		* Show plugin changes. Code adapted from W3 Total Cache.
+		*
+		* @access public
+		* @static
+		* @return void
+		*/	            
+        public static function in_plugin_update_message( $args ) {
+            $transient_name = 'wcqp_upgrade_notice_' . $args['Version'];
+            if ( false === ( $upgrade_notice = get_transient( $transient_name ) ) ) {
+                $response = wp_remote_get( 'https://plugins.svn.wordpress.org/woocommerce-quickpay/trunk/README.txt' );
+
+                if ( ! is_wp_error( $response ) && ! empty( $response['body'] ) ) {
+                    $upgrade_notice = self::parse_update_notice( $response['body'] );
+                    set_transient( $transient_name, $upgrade_notice, DAY_IN_SECONDS );
+                }
+            }
+
+            echo wp_kses_post( $upgrade_notice );  
+        }
+        
+        
+        /**
+         *
+         * parse_update_notice
+         * 
+         * Parse update notice from readme file.
+         * @param  string $content
+         * @return string
+         */
+        private static function parse_update_notice( $content ) {
+            // Output Upgrade Notice
+            $matches        = null;
+            $regexp         = '~==\s*Upgrade Notice\s*==\s*=\s*(.*)\s*=(.*)(=\s*' . preg_quote( WCQP_VERSION ) . '\s*=|$)~Uis';
+            $upgrade_notice = '';
+
+            if ( preg_match( $regexp, $content, $matches ) ) {
+                $version = trim( $matches[1] );
+                $notices = (array) preg_split('~[\r\n]+~', trim( $matches[2] ) );
+
+                if ( version_compare( WCQP_VERSION, $version, '<' ) ) {
+
+                    $upgrade_notice .= '<div class="wc_plugin_upgrade_notice">';
+
+                    foreach ( $notices as $index => $line ) {
+                        $upgrade_notice .= wp_kses_post( preg_replace( '~\[([^\]]*)\]\(([^\)]*)\)~', '<a href="${2}">${1}</a>', $line ) );
+                    }
+
+                    $upgrade_notice .= '</div> ';
+                }
+            }
+
+            return wp_kses_post( $upgrade_notice );
+        }
 	}
 
+    
 	// Make the object available for later use
 	function WC_QP() {
 		return WC_Quickpay::get_instance();
 	}
 	
+    
 	// Instantiate
 	WC_QP();
 	WC_QP()->hooks_and_filters();
 
+    
 	// Add the gateway to WooCommerce
 	function add_quickpay_gateway( $methods )
 	{
 		$methods[] = 'WC_Quickpay'; return $methods;
 	}
 	add_filter('woocommerce_payment_gateways', 'add_quickpay_gateway' );	
-	
 	add_filter('plugin_action_links_' . plugin_basename( __FILE__ ), 'WC_Quickpay::add_action_links'  );
 }
 
