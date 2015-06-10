@@ -1,0 +1,457 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Quickpay v3.0.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2014-10-03 13:12:17+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: CSL v1.x\n"
+"X-Poedit-Language: \n"
+"X-Poedit-Country: \n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: \n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
+
+#: classes/woocommerce-quickpay-request.php:199
+#@ woo-quickpay
+msgid "Payment renewed"
+msgstr "Betaling fornyet"
+
+#: classes/woocommerce-quickpay-request.php:219
+#@ woo-quickpay
+msgid "Payment refunded"
+msgstr "Betaling refunderet"
+
+#: classes/woocommerce-quickpay-request.php:245
+#@ woo-quickpay
+msgid "Recurring payment captured"
+msgstr "Tilbagevendende betaling er trukket"
+
+#: classes/woocommerce-quickpay-request.php:248
+#@ woo-quickpay
+msgid "Recurring payment failed"
+msgstr "Tilbagevendende betaling fejlede"
+
+#: classes/woocommerce-quickpay-settings.php:171
+#: woocommerce-quickpay.php:323
+#@ woo-quickpay
+msgid "Credit card"
+msgstr "Kreditkort"
+
+#: woocommerce-quickpay.php:501
+#@ woo-quickpay
+msgid "Payment failure"
+msgstr "Betaling fejlede"
+
+#: woocommerce-quickpay.php:505
+#: woocommerce-quickpay.php:663
+#@ woo-quickpay
+msgid "Quickpay Payment"
+msgstr "Quickpay betaling"
+
+#: woocommerce-quickpay.php:505
+#@ woo-quickpay
+msgid "Cancelled during process"
+msgstr "Annulleret under betalingsprocessen"
+
+#: woocommerce-quickpay.php:506
+#@ woo-quickpay
+msgid "Payment cancelled"
+msgstr "Betaling annulleret"
+
+#: classes/woocommerce-quickpay-settings.php:26
+#: classes/woocommerce-quickpay-settings.php:113
+#: classes/woocommerce-quickpay-settings.php:120
+#: classes/woocommerce-quickpay-settings.php:127
+#: classes/woocommerce-quickpay-settings.php:134
+#: classes/woocommerce-quickpay-settings.php:227
+#@ woo-quickpay
+msgid "Enable/Disable"
+msgstr "Aktiver/Deaktiver"
+
+#: classes/woocommerce-quickpay-settings.php:28
+#@ woo-quickpay
+msgid "Enable Quickpay Payment"
+msgstr "Aktiver Quickpay Betaling"
+
+#: classes/woocommerce-quickpay-settings.php:51
+#@ woo-quickpay
+msgid "Type in your merchant ID from Quickpay."
+msgstr "Indtast dit Quickpay Merchant ID."
+
+#: classes/woocommerce-quickpay-settings.php:54
+#@ woo-quickpay
+msgid "Secret MD5 string"
+msgstr "Hemmelig MD5-streng"
+
+#: classes/woocommerce-quickpay-settings.php:56
+#@ woo-quickpay
+msgid "This is the unique MD5 secret key, which the system uses to verify your transactions."
+msgstr "Dette er den unikke, hemmelige MD5 nøgle, Quickpay's system bruger til at verificere dine transaktioner med."
+
+#: classes/woocommerce-quickpay-settings.php:59
+#@ woo-quickpay
+msgid "Quickpay API key"
+msgstr "Quickpay API nøgle"
+
+#: classes/woocommerce-quickpay-settings.php:61
+#@ woo-quickpay
+msgid "The API key is unique and can be requested from within the Quickpay Administrator Tool"
+msgstr "API-nøglen er unik og kan forespørges fra Quickpay Administrations-værktøjet."
+
+#: classes/woocommerce-quickpay-settings.php:69
+#@ woo-quickpay
+msgid "Language"
+msgstr "Sprog"
+
+#: classes/woocommerce-quickpay-settings.php:70
+#@ woo-quickpay
+msgid "Payment Window Language"
+msgstr "Sprog i betalingsvinduet"
+
+#: classes/woocommerce-quickpay-settings.php:85
+#: woocommerce-quickpay.php:722
+#@ woo-quickpay
+msgid "Currency"
+msgstr "Valuta"
+
+#: classes/woocommerce-quickpay-settings.php:86
+#@ woo-quickpay
+msgid "Choose your currency. Please make sure to use the same currency as in your WooCommerce currency settings."
+msgstr "Vælg en valuta. Bemærk, at der skal bruges samme valuta som du benytter i WooCommerce."
+
+#: classes/woocommerce-quickpay-settings.php:98
+#@ woo-quickpay
+msgid "Cardtype lock"
+msgstr "Cardtype lock"
+
+#: classes/woocommerce-quickpay-settings.php:100
+#@ woo-quickpay
+msgid "Default: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://quickpay.dk/features/cardtypelock/</b>"
+msgstr "Standard: creditcard. Indtast de korttyper, du vil og kan acceptere (kommasepareret). Se de gyldige betalingsmetoder her: <b>http://quickpay.dk/features/cardtypelock/</b>"
+
+#: classes/woocommerce-quickpay-settings.php:104
+#@ woo-quickpay
+msgid "Enable split payments"
+msgstr "Aktiver del-betalinger."
+
+#: classes/woocommerce-quickpay-settings.php:106
+#@ woo-quickpay
+msgid "Accept split payments in your system."
+msgstr "Accepter del-betalinger i dit system."
+
+#: classes/woocommerce-quickpay-settings.php:107
+#@ woo-quickpay
+msgid "Remember to turn this on in your Quickpay Manager. Click for <a target=\"_blank\" href=\"http://quickpay.dk/features/split-payment/\">help</a>"
+msgstr "Husk at aktivere dette i din Quickpay Manager. Klik for at få <a target=\"_blank\" href=\"http://quickpay.dk/features/split-payment/\">hjælp</a>"
+
+#: classes/woocommerce-quickpay-settings.php:111
+#@ woo-quickpay
+msgid "Allow autocapture"
+msgstr "Accepter autocapture"
+
+#: classes/woocommerce-quickpay-settings.php:114
+#@ woo-quickpay
+msgid "Automatically capture payments."
+msgstr "Træk betalinger automatisk"
+
+#: classes/woocommerce-quickpay-settings.php:118
+#@ woo-quickpay
+msgid "Capture on complete"
+msgstr "Træk betaling når ordren er completed."
+
+#: classes/woocommerce-quickpay-settings.php:121
+#@ woo-quickpay
+msgid "When enabled quickpay payments will automatically be captured when order state is set to \"Complete\"."
+msgstr "Når det er aktiveret, vil quickpay-betalinger automatisk blive trukket, når ordrestatus bliver sat til \"Complete\"."
+
+#: classes/woocommerce-quickpay-settings.php:132
+#@ woo-quickpay
+msgid "Choose credit card or viaBill on payment selection"
+msgstr "Vælg mellem kreditkort eller viaBill under betalingsmetoder i shoppen."
+
+#: classes/woocommerce-quickpay-settings.php:135
+#@ woo-quickpay
+msgid "Allows your customers to choose between viaBill and credit card when choosing type of payment. <b>(Requires viaBill agreement)</b>"
+msgstr "TIlbyder dine kunder at vælge mellem viaBill og kreditkort, når de skal vælge betalingsmetode. <b>(Dette kræver en indløsningsaftale med viaBill)</b>"
+
+#: classes/woocommerce-quickpay-settings.php:144
+#@ woo-quickpay
+msgid "Title"
+msgstr "Titel"
+
+#: classes/woocommerce-quickpay-settings.php:146
+#@ woo-quickpay
+msgid "This controls the title which the user sees during checkout."
+msgstr "Tekst der vises som navn på betalingsmetoden, når dine kunder vælger Quickpay i checkout-processen."
+
+#: classes/woocommerce-quickpay-settings.php:147
+#: woocommerce-quickpay.php:645
+#@ woo-quickpay
+msgid "Quickpay"
+msgstr "Quickpay"
+
+#: classes/woocommerce-quickpay-settings.php:150
+#@ woo-quickpay
+msgid "Customer Message"
+msgstr "Besked til kunde"
+
+#: classes/woocommerce-quickpay-settings.php:152
+#@ woo-quickpay
+msgid "This controls the description which the user sees during checkout."
+msgstr "Dette styrer hvilken betalingsmetodebeskrivelse, der skal vises til dine kunder under checkout-processen."
+
+#: classes/woocommerce-quickpay-settings.php:162
+#@ woo-quickpay
+msgid "Text on payment button"
+msgstr "Tekst på betalingsknap"
+
+#: classes/woocommerce-quickpay-settings.php:164
+#@ woo-quickpay
+msgid "This text will show on the button which opens the Quickpay window."
+msgstr "Denne tekst vises på den knap, der åbner Quickpay betalingsvinduet."
+
+#: classes/woocommerce-quickpay-settings.php:165
+#@ woo-quickpay
+msgid "Open secure Quickpay window."
+msgstr "Åbn sikkert Quickpay-vindue."
+
+#: classes/woocommerce-quickpay-settings.php:168
+#@ woo-quickpay
+msgid "Credit card label"
+msgstr "Kreditkort tekst"
+
+#: classes/woocommerce-quickpay-settings.php:170
+#: classes/woocommerce-quickpay-settings.php:176
+#@ woo-quickpay
+msgid "Label shown when choosing credit card or viaBill."
+msgstr "Tekst der vises, når kunden skal vælge mellem kreditkort eller viaBill."
+
+#: classes/woocommerce-quickpay-settings.php:174
+#@ woo-quickpay
+msgid "viaBill label"
+msgstr "viaBill tekst"
+
+#: classes/woocommerce-quickpay-settings.php:177
+#@ woo-quickpay
+msgid "viaBill"
+msgstr "viaBill"
+
+#: classes/woocommerce-quickpay-settings.php:211
+#@ woo-quickpay
+msgid "Redirect message"
+msgstr "Besked ved viderestilling"
+
+#: classes/woocommerce-quickpay-settings.php:213
+#@ woo-quickpay
+msgid "This message is shown right before the customer is automatically redirected to the Quickpay payment window."
+msgstr "Denne besked vises lige inden kunden automatisk viderestilles til Quickpays betalingsvindue."
+
+#: classes/woocommerce-quickpay-settings.php:214
+#@ woo-quickpay
+msgid "You will be automatically redirected to the payment window in <strong>5 seconds</strong>. Click on the button below if you are not redirected."
+msgstr "Du vil om <strong>5 sekunder</strong> automatisk blive viderestillet til betalingsvinduet. Klik på knappen nedenfor, hvis viderestillingen ikke sker automatisk."
+
+#: classes/woocommerce-quickpay-settings.php:225
+#@ woo-quickpay
+msgid "Automatically capture the first payment of a subscription."
+msgstr "Træk den første abonnementsbetaling automatisk"
+
+#: classes/woocommerce-quickpay-settings.php:228
+#@ woo-quickpay
+msgid "Automatically capture the first payment of a subscription when order is complete."
+msgstr "Træk første betaling for et abonnement automatisk når en ordre er afsluttet."
+
+#: woocommerce-quickpay.php:646
+#@ woo-quickpay
+msgid "Allows you to receive payments via Quickpay."
+msgstr "Modtag betalinger via Quickpay"
+
+#: woocommerce-quickpay.php:689
+#@ woo-quickpay
+msgid "Current payment state"
+msgstr "Nuværende transaktionsstatus"
+
+#: woocommerce-quickpay.php:693
+#@ woo-quickpay
+msgid "Standard actions"
+msgstr "Standardhandlinger"
+
+#: woocommerce-quickpay.php:697
+#@ woo-quickpay
+msgid "You are about to CAPTURE this payment"
+msgstr "Du er ved at TRÆKKE denne betaling."
+
+#: woocommerce-quickpay.php:697
+#@ woo-quickpay
+msgid "Capture"
+msgstr "Træk"
+
+#: woocommerce-quickpay.php:701
+#@ woo-quickpay
+msgid "You are about to CANCEL this payment"
+msgstr "Du er ved at ANNULLERE denne betaling"
+
+#: woocommerce-quickpay.php:701
+#@ woo-quickpay
+msgid "Cancel"
+msgstr "Annuller"
+
+#: woocommerce-quickpay.php:705
+#@ woo-quickpay
+msgid "You are about to REFUND this payment"
+msgstr "Du er ved at REFUNDERE denne betaling"
+
+#: woocommerce-quickpay.php:705
+#@ woo-quickpay
+msgid "Refund"
+msgstr "Refunder"
+
+#: woocommerce-quickpay.php:720
+#@ woo-quickpay
+msgid "Split payment"
+msgstr "Del-betaling"
+
+#: woocommerce-quickpay.php:723
+#@ woo-quickpay
+msgid "Balance"
+msgstr "Balance"
+
+#: woocommerce-quickpay.php:724
+#@ woo-quickpay
+msgid "Remaining"
+msgstr "Tilbageværende"
+
+#: woocommerce-quickpay.php:731
+#@ woo-quickpay
+msgid "Split Capture"
+msgstr "Del-betaling"
+
+#: woocommerce-quickpay.php:732
+#@ woo-quickpay
+msgid "Split and finalize"
+msgstr "Del-betal og afslut"
+
+#: classes/woocommerce-quickpay-order.php:149
+#@ woo-quickpay
+msgid "Payment Fee"
+msgstr "Betalingsgebyr"
+
+#: woocommerce-quickpay.php:500
+#, php-format
+#@ woo-quickpay
+msgid "<p><strong>Payment failure</strong> A problem with your payment on order <strong>#%i</strong> occured. Please try again to complete your order.</p>"
+msgstr "<p><strong>Betalingen fejlede</strong> Der opstod et problem med din ordre <strong>#%i</strong>. Prøv venligst igen for at færddiggøre din bestilling.</p>"
+
+#: woocommerce-quickpay.php:506
+#@ woo-quickpay
+msgid "Due to cancellation of your payment, the order process was not completed. Please fulfill the payment to complete your order."
+msgstr "Da du har annulleret betalingen, er din ordre ikke gennemført. Fortsæt betalingsprocessen for at gennemføre din bestilling."
+
+#: classes/woocommerce-quickpay-settings.php:34
+#@ woo-quickpay
+msgid "Quickpay account"
+msgstr "Quickpay kontoindstillinger"
+
+#: classes/woocommerce-quickpay-settings.php:141
+#@ woo-quickpay
+msgid "Shop setup"
+msgstr "Shop-indstillinger"
+
+#: classes/woocommerce-quickpay-settings.php:156
+#@ woo-quickpay
+msgid "Email instructions"
+msgstr "Email-instruktioner"
+
+#: classes/woocommerce-quickpay-settings.php:158
+#@ woo-quickpay
+msgid "Instructions that will be added to emails."
+msgstr "Eventuelle instruktioner, der bliver tilføjet ordrebekræftelsen"
+
+#: classes/woocommerce-quickpay-settings.php:37
+#: classes/woocommerce-quickpay-settings.php:39
+#@ woo-quickpay
+msgid "Enable debug mode"
+msgstr "Aktiver debug mode"
+
+#: classes/woocommerce-quickpay-settings.php:43
+#: classes/woocommerce-quickpay-settings.php:45
+#@ woo-quickpay
+msgid "Enable test mode"
+msgstr "Aktiver test mode"
+
+#: classes/woocommerce-quickpay-settings.php:49
+#@ woo-quickpay
+msgid "QuickpayId"
+msgstr "Quickpay ID"
+
+#: classes/woocommerce-quickpay-settings.php:125
+#@ woo-quickpay
+msgid "Refund on order state 'refunded'"
+msgstr "Refunder betaling, når ordrestatus sættes til 'refunderet'."
+
+#: classes/woocommerce-quickpay-settings.php:128
+#@ woo-quickpay
+msgid "When enabled quickpay payments will automatically be refunded when order state is set to \"Refunded\"."
+msgstr "Når denne funktion er aktiveret, bliver transaktioner automatisk refunderet, når ordrestatus sættes til \\\"Refunderet\\\"."
+
+#: woocommerce-quickpay.php:151
+#@ woo-quickpay
+msgid "Settings"
+msgstr "Indstillinger"
+
+#: woocommerce-quickpay.php:568
+#, php-format
+#@ woo-quickpay
+msgid "Payment authorized. Transaction ID: %s"
+msgstr "Betaling autoriseret. Transaktions ID: %s"
+
+#: woocommerce-quickpay.php:575
+#, php-format
+#@ woo-quickpay
+msgid "Payment FAILED. Message from Quickpay: %S"
+msgstr "Betaling FEJLET. Besked fra Quickpay: %S"
+
+#: woocommerce-quickpay.php:725
+#@ woo-quickpay
+msgid "Amount to capture"
+msgstr "Træk beløb"
+
+#: woocommerce-quickpay.php:731
+#@ woo-quickpay
+msgid "You are about to SPLIT CAPTURE this payment. This means that you will capture the amount stated in the input field. The payment state will remain open."
+msgstr "Du er nu ved at SPLIT-trække denne betaling. Det betyder at du vil trække det beløb, der er skrevet i feltet. Transaktionen vil forblive åben for yderligere hævninger."
+
+#: woocommerce-quickpay.php:732
+#@ woo-quickpay
+msgid "You are about to SPLIT CAPTURE and FINALIZE this payment. This means that you will capture the amount stated in the input field and that you can no longer capture money from this transaction."
+msgstr "Du er ved at SPLIT-trække og FÆRDIGGØRE denne betaling. Det betyder at beløbet i feltet vil blive trukket, og at transaktionen vil være lukket for yderligere hævninger."
+
+#: classes/woocommerce-quickpay-settings.php:180
+#@ woo-quickpay
+msgid "Credit card icons"
+msgstr "Kreditkort-ikoner"
+
+#: classes/woocommerce-quickpay-settings.php:182
+#@ woo-quickpay
+msgid "Choose the card icons you wish to show next to the Quickpay payment option in your shop."
+msgstr "Markér de kortikoner du vil vise ud for Quickpay betalingsmetoden i din shop."
+
+#: classes/woocommerce-quickpay-settings.php:205
+#@ woo-quickpay
+msgid "Credit card icons maximum height"
+msgstr "Maximumhøjde på kreditkortikonerne."
+
+#: classes/woocommerce-quickpay-settings.php:207
+#@ woo-quickpay
+msgid "Set the maximum pixel height of the credit card icons shown on the frontend."
+msgstr "Sæt den maximale pixelhøjde på kreditkortikonerne der vises i din shop."
+
