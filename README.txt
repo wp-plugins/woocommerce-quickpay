@@ -2,9 +2,9 @@
 Contributors: PerfectSolution
 Donate link: http://perfect-solution.dk/donation
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration, woocommerce, woocommerce quickpay, payment, payment gateway
-Requires at least: 3.5.0
+Requires at least: 4.0.0
 Tested up to: 4.2.2
-Stable tag: 3.0.9
+Stable tag: 4.0.7
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,14 +23,50 @@ With WooCommerce Quickpay, you are able to integrate your Quickpay gateway to yo
 
 == Changelog ==
 
+= 4.0.7 =
+* Add upgrade notifce for 4.0.0
+
+= 4.0.6 = 
+* Activate autofee settings
+* Implement upgrade notices inside the plugins section
+* Update incorrect autofee key in recurring requests
+* Update success response HTTP codes
+* Typecasting response to string if no message object is available
+
+= 4.0.5 = 
+* Add the possibility to set a custom branding ID
+
+= 4.0.4 =
+* Stop forcing HTTP on callbacks.
+
+= 4.0.3 =
+* Add WC_Quickpay_API_Subscription::is_action_allowed
+* Manual AJAX actions handled for subscriptions
+
+= 4.0.2 = 
+* Add mobilepay option
+* Disabled viabill since the Quickpay API is not ready to support it yet.
+
+= 4.0.1 =
+* Add version parameter to the payment request
+
+= 4.0.0 =
+* Now only supports the new Quickpay gateway platform
+* Introduce exception class Quickpay_Exception
+* Introduce exception class Quickpay_API_Exception
+* Introduce WC_Quickpay::process_refund to support "auto" gateway refunds
+* Introduce WC_Quickpay_API
+* Introduce WC_Quickpay_API_Payment
+* Introduce WC_Quickpay_API_Subscription
+* Introduce WC_Quickpay_Log - Debugging information is now added to WooCommerce system logs.
+* Remove WC_Quickpay_Request
+* Remove donation link
+
 = 3.0.9 = 
 * Add support for important update notifications fetched from the README.txt file.
 
 = 3.0.8 = 
 * Switched to WC_Order::get_total() instead of WC_Order::order_total to fix issues with WPML currencies.
-
-= 3.0.7 =
-* Stop forcing http protocol to callbacks. Now defaults to the current protocol used on the website.
 
 = 3.0.6 = 
 * Added proper support for both Sequential Order Numbers FREE and Sequential Order Numbers PRO.
@@ -195,3 +231,5 @@ With WooCommerce Quickpay, you are able to integrate your Quickpay gateway to yo
 *  Bugfix: Corrected a few unchecked variables that caused php notices in error logs.
 
 == Upgrade Notice ==
+= 4.0.0 =
+4.0.0 is a major update. 4.0.0 will only work with the new Quickpay v10 manager, so it is advised to consult QuickPay before upgrading. Also, the plugin will require additional setup before working! It is advised to test this version out before upgrading in production.

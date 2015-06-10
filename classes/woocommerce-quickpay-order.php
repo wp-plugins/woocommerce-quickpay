@@ -69,7 +69,7 @@ class WC_Quickpay_Order extends WC_Order {
 
 
 	/**
-	* get_cancellation_url function
+	* get_transaction_id function
 	*
 	* If the order has a transaction ID, we will return it. If no transaction ID is set we return FALSE.
 	*
@@ -82,7 +82,7 @@ class WC_Quickpay_Order extends WC_Order {
 
 
 	/**
-	* set_cancellation_url function
+	* set_transaction_id function
 	*
 	* Set the transaction ID on an order
 	*
@@ -119,7 +119,7 @@ class WC_Quickpay_Order extends WC_Order {
 		$has_subscription = FALSE;
 
 		if( WC_Quickpay_Helper::subscription_is_active() ) {
-			$has_subscription = WC_Subscriptions_Order::order_contains_subscription( $this->order );
+			$has_subscription = WC_Subscriptions_Order::order_contains_subscription( $this );
 		}	
 
 		return $has_subscription;	
@@ -134,7 +134,6 @@ class WC_Quickpay_Order extends WC_Order {
 	* @access public
 	* @return boolean
 	*/	
-
 	public function add_transaction_fee( $fee ) {
 		$order_total = $this->get_total() ;
 		$order_total_formated = WC_Quickpay_Helper::price_multiply( $order_total );
@@ -160,6 +159,29 @@ class WC_Quickpay_Order extends WC_Order {
 
 		return FALSE;
 	}
+    
+    
+ 	/**
+	* subscription_is_renewal_failure function.
+	*
+	* Checks if the order is currently in a failed renewal
+	*
+	* @access public
+	* @return boolean
+	*/	   
+    public function subscription_is_renewal_failure()
+    {
+        $renewal_failure = FALSE; 
+        
+        if( WC_Quickpay_Helper::subscription_is_active() )
+        {
+            $renewal_failure = (WC_Subscriptions_Renewal_Order::is_renewal( $this ) AND $this->status == 'failed');
+        }
+        
+        return $renewal_failure;
+    }
+    
+    
 	/**
 	* note function.
 	*

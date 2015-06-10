@@ -31,7 +31,7 @@ class WC_Quickpay_Settings {
 
 				'_Account_setup' => array(
 					'type' => 'title',
-					'title' => __( 'Quickpay account', 'woo-quickpay' ),
+					'title' => __( 'Payment Window - Integration', 'woo-quickpay' ),
 				),
 					'quickpay_debug' => array(
 						'title' => __( 'Enable debug mode', 'woo-quickpay' ), 
@@ -39,28 +39,35 @@ class WC_Quickpay_Settings {
 						'label' => __( 'Enable debug mode', 'woo-quickpay' ), 
 						'default' => 'no'
 					),
-					'quickpay_testmode' => array(
-						'title' => __( 'Enable test mode', 'woo-quickpay' ), 
-						'type' => 'checkbox', 
-						'label' => __( 'Enable test mode', 'woo-quickpay' ), 
-						'default' => 'no'
-					),
 					'quickpay_merchantid' => array(
-									'title' => __('QuickpayId', 'woo-quickpay'),
+									'title' => __('Merchant id', 'woo-quickpay'),
 									'type' => 'text',
-									'description' => __('Type in your merchant ID from Quickpay.', 'woo-quickpay')
+									'description' => __('Your Payment Window agreement merchant id. Found in the "Integration" tab inside the Quickpay manager.', 'woo-quickpay')
 					),
-					'quickpay_md5secret' => array(
-									'title' => __('Secret MD5 string', 'woo-quickpay'),
+					'quickpay_agreement_id' => array(
+									'title' => __('Agreement id', 'woo-quickpay'),
 									'type' => 'text',
-									'description' => __('This is the unique MD5 secret key, which the system uses to verify your transactions.', 'woo-quickpay' )
+									'description' => __('Your Payment Window agreement id. Found in the "Integration" tab inside the Quickpay manager.', 'woo-quickpay' )
 					),
-					'quickpay_apikey' => array(
-						'title' => __('Quickpay API key', 'woo-quickpay'),
+					'quickpay_agreement_apikey' => array(
+						'title' => __('Api key', 'woo-quickpay'),
 						'type' => 'text',
-						'description' => __( 'The API key is unique and can be requested from within the Quickpay Administrator Tool', 'woo-quickpay' )
-					),	
-
+						'description' => __( 'Your Payment Window agreement API key. Found in the "Integration" tab inside the Quickpay manager.', 'woo-quickpay' )
+					),
+					'quickpay_privatekey' => array(
+						'title' => __('Private key', 'woo-quickpay'),
+						'type' => 'text',
+						'description' => __( 'Your Payment Window agreement private key. Found in the "Integration" tab inside the Quickpay manager.', 'woo-quickpay' )
+					),
+				'_API_setup' => array(
+					'type' => 'title',
+					'title' => __( 'API - Integration', 'woo-quickpay' ),
+				),
+					'quickpay_apikey' => array(
+						'title' => __('Api User key', 'woo-quickpay'),
+						'type' => 'text',
+						'description' => __( 'Your API User\'s key. Create a separate API user in the "Users" tab inside the Quickpay manager.' , 'woo-quickpay' )
+					),
 				'_Extra_gateway_settings' => array(
 					'type' => 'title',
 					'title' => 'Extra gateway settings'
@@ -71,15 +78,15 @@ class WC_Quickpay_Settings {
 									'type' => 'select',
 									'options' => array(
 													'da' => 'Danish',
-													'de'=>'German', 
-													'en'=>'English', 
-													'fr'=>'French', 
-													'it'=>'Italian', 
-													'no'=>'Norwegian', 
-													'nl'=>'Dutch', 
-													'pl'=>'Polish', 
-													'se'=>'Swedish'
-													)
+													'de' =>'German', 
+													'en' =>'English', 
+													'fr' =>'French', 
+													'it' =>'Italian', 
+													'no' =>'Norwegian', 
+													'nl' =>'Dutch', 
+													'pl' =>'Polish', 
+													'se' =>'Swedish'
+								                )
 					),
 					'quickpay_currency' => array(
 									'title' => __('Currency', 'woo-quickpay'),
@@ -92,21 +99,20 @@ class WC_Quickpay_Settings {
 													'NOK' => 'NOK',
 													'SEK' => 'SEK',
 													'USD' => 'USD'
-													)
+												)
 					),
 					'quickpay_cardtypelock' => array(
-									'title' => __( 'Cardtype lock', 'woo-quickpay' ), 
+									'title' => __( 'Payment methods', 'woo-quickpay' ), 
 									'type' => 'text', 
-									'description' => __( 'Default: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://quickpay.dk/features/cardtypelock/</b>', 'woo-quickpay' ), 
+									'description' => __( 'Default: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://tech.quickpay.net/appendixes/payment-methods/</b>', 'woo-quickpay' ), 
 									'default' => 'creditcard'					
-					),	
-					'quickpay_splitcapture' => array(
-									'title' => __( 'Enable split payments', 'woo-quickpay' ), 
-									'type' => 'checkbox', 
-									'label' => __( 'Accept split payments in your system.', 'woo-quickpay' ), 
-									'description' => __( 'Remember to turn this on in your Quickpay Manager. Click for <a target="_blank" href="http://quickpay.dk/features/split-payment/">help</a>', 'woo-quickpay' ), 
-									'default' => 'yes'
 					),
+					'quickpay_branding_id' => array(
+									'title' => __( 'Branding ID', 'woo-quickpay' ), 
+									'type' => 'text', 
+									'description' => __( 'Leave empty if you have no custom branding options', 'woo-quickpay' ), 
+									'default' => ''					
+					),	
 					'quickpay_autocapture' => array(
 									'title' => __( 'Allow autocapture', 'woo-quickpay' ), 
 									'type' => 'checkbox', 
@@ -114,6 +120,14 @@ class WC_Quickpay_Settings {
 									'description' => __( 'Automatically capture payments.', 'woo-quickpay' ), 
 									'default' => 'no'
 					),
+
+					'quickpay_autofee' => array(
+									'title' => __( 'Enable autofee', 'woo-quickpay' ), 
+									'type' => 'checkbox', 
+									'label' => __( 'Enable/Disable', 'woo-quickpay' ), 
+									'description' => __( 'If enabled, the fee charged by the acquirer will be calculated and added to the transaction amount.', 'woo-quickpay' ), 
+									'default' => 'no'
+					),        
 					'quickpay_captureoncomplete' => array(
 									'title' => __( 'Capture on complete', 'woo-quickpay' ), 
 									'type' => 'checkbox', 
@@ -121,21 +135,24 @@ class WC_Quickpay_Settings {
 									'description' => __( 'When enabled quickpay payments will automatically be captured when order state is set to "Complete".', 'woo-quickpay'), 
 									'default' => 'no'
 					),
-					'quickpay_refundonrefunded' => array(
-									'title' => __( 'Refund on order state \'refunded\'', 'woo-quickpay' ), 
+                    /* NOTE: viabill not supported in the new manager yet
+                    
+					'quickpay_viabill' => array(
+									'title' => __( 'Enable viaBill as a child option on checkout.', 'woo-quickpay' ), 
 									'type' => 'checkbox', 
 									'label' => __( 'Enable/Disable', 'woo-quickpay' ), 
-									'description' => __( 'When enabled quickpay payments will automatically be refunded when order state is set to "Refunded".', 'woo-quickpay'), 
+									'description' => __( 'Use this option if you offer both credit card and viaBill through Quickpay. If you offer only viaBill, leave this option and insert "viabill" into the "payment methods" field.', 'woo-quickpay' ), 
 									'default' => 'no'
 					),
-					'quickpay_ibillOrCreditcard' => array(
-									'title' => __( 'Choose credit card or viaBill on payment selection', 'woo-quickpay' ), 
+                    */
+            
+					'quickpay_mobilepay' => array(
+									'title' => __( 'Enable Mobilepay as a child option on checkout.', 'woo-quickpay' ), 
 									'type' => 'checkbox', 
 									'label' => __( 'Enable/Disable', 'woo-quickpay' ), 
-									'description' => __( 'Allows your customers to choose between viaBill and credit card when choosing type of payment. <b>(Requires viaBill agreement)</b>', 'woo-quickpay' ), 
+									'description' => __( 'Use this option if you offer both credit card and mobilepay through Quickpay. If you offer only Mobilepay, leave this option and insert "mobilepay" into the "payment methods" field.', 'woo-quickpay' ), 
 									'default' => 'no'
 					),
-
 				'_Shop_setup' => array(
 					'type' => 'title',
 					'title' => __( 'Shop setup', 'woo-quickpay' ),

@@ -39,25 +39,6 @@ class WC_Quickpay_Helper {
 
 
 	/**
-	* format_msgtype function.
-	*
-	* Returns the msgtype with the correct formatted ending
-	*
-	* @access public static
-	* @return string
-	*/
-	public static function format_msgtype( $msgtype ) {
-		$lc = substr( $msgtype , -1 );
-		if( $lc == 'l' )
-			$append = 'led';
-		else
-			$append = ( $lc == 'e' ) ? 'd' : 'ed';
-
-		return $msgtype . $append;
-	}
-
-
-	/**
 	* subscription_is_active function.
 	*
 	* Checks if Woocommerce Subscriptions is enabled or not
