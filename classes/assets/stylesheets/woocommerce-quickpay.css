@@ -1,0 +1,62 @@
+.woocommerce-quickpay-capture {
+	color:#85ad74 !important;
+}
+.woocommerce-quickpay-subscribe {
+	color:#85ad74 !important;
+}
+
+.woocommerce-quickpay-cancel {
+	color:#ad74a2 !important;
+}
+
+.woocommerce-quickpay-authorize,
+.woocommerce-quickpay-refund {
+	color:#7499ad !important;
+}
+
+#quickpay-payment-actions {
+	position:relative;
+}
+
+#quickpay-payment-actions .left {
+	float:left;
+}
+#quickpay-payment-actions .right {
+	float:right;
+}
+
+#quickpay-payment-actions .loader {
+	position:absolute;
+	top:0;
+	left:0;
+	height:100%;
+	width:100%;
+	background: rgba( 255, 255, 255, 0.7 ) url('../images/loader.gif') no-repeat center center;
+	background-size: 50% ;
+}
+
+.quickpay-loader {
+    min-height:20px;
+	width:50px;
+	background: url('../images/loader.gif') no-repeat center center;
+	background-size: 100%;   
+}
+
+#quickpay-payment-actions h4 .inline_total {
+	float: right;
+	color: #999;
+}
+
+#quickpay-payment-actions b, #quickpay-payment-actions strong {
+	font-weight:700;
+}
+
+#quickpay-payment-actions .quickpay-split-container {
+	border-top: 1px solid #ddd;
+	margin: 0 -12px;
+	padding: 10px 10px 0;
+}
+
+#quickpay-payment-actions .warning {
+	color:#a00;
+}
