@@ -4,7 +4,7 @@ Donate link: http://perfect-solution.dk/donation
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration, woocommerce, woocommerce quickpay, payment, payment gateway
 Requires at least: 4.0.0
 Tested up to: 4.2.2
-Stable tag: 4.0.7
+Stable tag: 4.1.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,6 +22,21 @@ With WooCommerce Quickpay, you are able to integrate your Quickpay gateway to yo
 6. You are good to go.
 
 == Changelog ==
+
+= 4.1.0 =
+* Add Google Analytics support
+* Performance optimization: The order view is now making async requests to retrieve the transaction state.
+* Add complete order reference in order overview
+* Add version number to the plugin settings page
+* Add support for multiple instances. Now it is possible to add MobilePay, Paii and viaBill as separate payment methods. Each instance is based on the core module settings to ensure a minimum amount of configuration.
+* Add setting: quickpay_redirect - allows the shop owner to enable/disable the auto redirection in the checkout process.
+* Remove setting: quickpay_mobilepay
+* Remove setting: quickpay_viabill
+* Remove setting: quickpay_labelCreditCard
+* Remove setting: quickpay_labelViaBill
+* Remove setting: quickpay_debug
+* Fix problem with attempt of payment capture when setting order status to complete on a subscription order. 
+* Updated translations
 
 = 4.0.7 =
 * Add upgrade notifce for 4.0.0

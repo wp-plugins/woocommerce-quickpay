@@ -35,6 +35,13 @@
 	background-size: 50% ;
 }
 
+.quickpay-loader {
+    min-height:20px;
+	width:50px;
+	background: url('../images/loader.gif') no-repeat center center;
+	background-size: 100%;   
+}
+
 #quickpay-payment-actions h4 .inline_total {
 	float: right;
 	color: #999;

@@ -100,17 +100,67 @@
 			btnSplitFinalize.fadeIn().prop('disabled', false);
 		}
 	};
+    
+    
+    QuickpayAjaxStatus.prototype.init = function() {
+        var self = this;
+        if (this.elements.length) {
+            this.elements.each(function() {
+                var $this = $(this);
 
+                var data = {};
+                
+                data['quickpay-transaction-id'] = $this.data('quickpay-transaction-id');
+                data['quickpay-post-id'] = $this.data('quickpay-post-id');
+
+                self.ajaxGetTransaction(data).done(function(transactionData){
+                    self.handleTransactionData($this, transactionData);
+                });
+         
+            });
+        }
+    };
+    
+    QuickpayAjaxStatus.prototype.handleTransactionData = function($element, transactionData) {
+        $.each(transactionData, function(key, data) {
+            var contentElement = $element.find('[data-quickpay-show="' + key + '"]');
+                contentElement.text(data.value);
+            
+            if (data.hasOwnProperty('attr')) {
+                $.each(data.attr, function(attr, attrValue) {
+                    if(!!contentElement.attr(attr)) {
+                        attrValue += ' ' + contentElement.attr(attr);  
+                    }
+                    contentElement.attr(attr, attrValue); 
+                });
+            }
+            
+            $element.removeClass('quickpay-loader');
+        });
+    };
+    
+    QuickpayAjaxStatus.prototype.ajaxGetTransaction = function(data) {
+        var promise = $.Deferred();
+        $.getJSON(ajaxurl, $.extend( {}, { action : 'quickpay_get_transaction_information' }, data ), function(response) {
+           promise.resolve(response); 
+        });
+        return promise;
+    };
+    
 	// DOM ready
 	$(function() {
-		new Quickpay();
+		new Quickpay().init();
+        new QuickpayAjaxStatus().init();
 	});
 
 	function Quickpay() {
 		this.actionBox 	= $( '#quickpay-payment-actions' );
 		this.postID		= $( '#post_ID' );
 		this.loaderBox 	= $( '<div class="loader"></div>');
-		this.init();
 	}
+    
+    function QuickpayAjaxStatus() {
+        this.elements = $( '[data-quickpay-transaction-id]' );
+    }
 
 })(jQuery);

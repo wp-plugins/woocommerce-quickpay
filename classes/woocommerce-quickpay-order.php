@@ -79,8 +79,8 @@ class WC_Quickpay_Order extends WC_Order {
 	public function get_transaction_id() {
 		return get_post_meta( $this->id , 'TRANSACTION_ID', TRUE );
 	}
-
-
+    
+    
 	/**
 	* set_transaction_id function
 	*
@@ -92,8 +92,34 @@ class WC_Quickpay_Order extends WC_Order {
 	public function set_transaction_id( $transaction_id ) {
 		update_post_meta( $this->id , 'TRANSACTION_ID', $transaction_id );
 	}
-
-
+    
+    
+	/**   
+	* get_transaction_order_id function
+	*
+	* If the order has a transaction order reference, we will return it. If no transaction order reference is set we return FALSE.
+	*
+	* @access public
+	* @return string
+	*/	
+	public function get_transaction_order_id() {
+		return get_post_meta( $this->id , 'TRANSACTION_ORDER_ID', TRUE );
+	}
+    
+    
+	/**
+	* set_transaction_order_id function
+	*
+	* Set the transaction order ID on an order
+	*
+	* @access public
+	* @return void
+	*/	
+	public function set_transaction_order_id( $transaction_order_id ) {
+		update_post_meta( $this->id , 'TRANSACTION_ORDER_ID', $transaction_order_id );
+	}
+    
+    
 	/**
 	* get_clean_order_number function
 	*
