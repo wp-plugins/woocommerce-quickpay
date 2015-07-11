@@ -8,7 +8,9 @@ class WC_Quickpay_MobilePay extends WC_Quickpay_Instance {
         parent::__construct();
         
         // Get gateway variables
-        $this->id = 'MobilePay';
+        $this->id = 'mobilepay';
+        
+        $this->method_title = 'QuickPay - MobilePay';
         
         $this->setup();
         

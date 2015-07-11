@@ -8,7 +8,9 @@ class WC_Quickpay_Paii extends WC_Quickpay_Instance {
         parent::__construct();
         
         // Get gateway variables
-        $this->id = 'Paii';
+        $this->id = 'paii';
+        
+        $this->method_title = 'Quickpay - Paii';
         
         $this->setup();
         

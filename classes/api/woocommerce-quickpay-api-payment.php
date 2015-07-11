@@ -34,6 +34,22 @@ class WC_Quickpay_API_Payment extends WC_Quickpay_API_Transaction
     	// Append the main API url
         $this->api_url = $this->api_url . 'payments/';
     }
+    
+    
+   	/**
+	* create function.
+	* 
+	* Creates a new payment via the API
+	*
+	* @access public
+	* @param  WC_Quickpay_Order $order
+	* @return object
+	* @throws Quickpay_API_Exception
+	*/   
+    public function create( WC_Quickpay_Order $order ) 
+    {
+        return parent::create( $order );
+    }           
 
 
    	/**

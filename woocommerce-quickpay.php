@@ -1,10 +1,10 @@
 <?php
 
 /*
-Plugin Name: WooCommerce Quickpay
+Plugin Name: WooCommerce QuickPay
 Plugin URI: http://wordpress.org/plugins/woocommerce-quickpay/
-Description: Integrates your Quickpay payment getway into your WooCommerce installation.
-Version: 4.1.0
+Description: Integrates your QuickPay payment getway into your WooCommerce installation.
+Version: 4.2.0
 Author: Perfect Solution
 Text Domain: woo-quickpay
 Author URI: http://perfect-solution.dk
@@ -16,7 +16,7 @@ function init_quickpay_gateway() {
 
 	if ( ! class_exists( 'WC_Payment_Gateway' )) { return; }
      
-    define( 'WCQP_VERSION', '4.1.0' );
+    define( 'WCQP_VERSION', '4.2.0' );
 
 	// Import helper classes
     require_once( 'classes/api/woocommerce-quickpay-api.php' );
@@ -71,6 +71,7 @@ function init_quickpay_gateway() {
 		public function __construct() 
 		{
 		    $this->id			= 'quickpay';
+		    $this->method_title = 'QuickPay';
 		    $this->icon 		= '';
 		    $this->has_fields 	= false;	
 
@@ -134,11 +135,7 @@ function init_quickpay_gateway() {
 		    add_action( 'scheduled_subscription_payment_' . $this->id, array( $this, 'scheduled_subscription_payment' ), 10, 3 );
 		    add_action( 'woocommerce_api_wc_' . $this->id, array( $this, 'callback_handler' ) );    
 		    add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
-            
-            if( WC_Quickpay_Helper::option_is_enabled($this->s('quickpay_redirect')) ) {
-                add_action( 'woocommerce_receipt_' . $this->id, 'WC_Quickpay_Helper::enqueue_javascript_redirect' );
-            }
-            
+                     
 		    add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 2 );
 		    add_action( 'cancelled_subscription_' . $this->id, array( $this, 'subscription_cancellation') )	;
             add_action( 'in_plugin_update_message-woocommerce-quickpay/woocommerce-quickpay.php', array( __CLASS__, 'in_plugin_update_message' ) );
@@ -475,22 +472,64 @@ function init_quickpay_gateway() {
 		{
 			global $woocommerce;
 
-			$woocommerce->cart->empty_cart();
-
+			// Instantiate order object
 			$order = new WC_Quickpay_Order( $order_id );
 
-			$gwType = NULL;
+			// Instantiate API Payment object
+            if( ! $order->contains_subscription() )
+            {
+                $api_transaction = new WC_Quickpay_API_Payment();
+            }
+            else 
+            {
+                $api_transaction = new WC_Quickpay_API_Subscription();
+            }
+            
 
-			if( WC_Quickpay_Helper::option_is_enabled( $this->s( 'quickpay_viabill' ) ) OR WC_Quickpay_Helper::option_is_enabled( $this->s( 'quickpay_mobilepay' ) ) ) {
-				if( isset( $_POST['quickpay-gwType'] ) AND in_array( $_POST['quickpay-gwType'], array( 'mobilepay', 'viabill', 'creditcard' ) ) ) {
-					$gwType = $_POST['quickpay-gwType'];
-				}
-			}	
+            // Create a new object
+            $payment = new stdClass();
+            // If a payment ID exists, go get it
+            $payment->id = $order->get_payment_id();
+            // Create a payment link
+            $link = new stdClass();
+            // If a payment link exists, go get it
+            $link->url = $order->get_payment_link();
 
-			return array(
-				'result' 	=> 'success',
-				'redirect'	=>  apply_filters( 'woocommerce_quickpay_process_payment', add_query_arg( 'gwType', $gwType, $order->get_checkout_payment_url( TRUE ) ), $order, $this->settings, $_POST )
-			);	
+
+            // If the order does not already have a payment ID,
+            // we will create on an attach it to the order
+            // We also check if a payment already exists. If a link exists, we don't
+            // need to create a payment.
+            if( empty($payment->id) && empty($link->url) ) 
+            {
+	            $payment = $api_transaction->create($order);
+	            $order->set_payment_id( $payment->id );
+            }
+
+           
+            // If the order does not already have a payment ID,
+            // we will create on an attach it to the order
+            if( empty($link->url) ) 
+            {
+	            $link = $api_transaction->create_link( $payment->id, $order );
+
+	            if( WC_Quickpay_Helper::is_url($link->url) )
+	            {
+	            	$order->set_payment_link( $link->url );
+	            }
+            }
+
+            
+            // Validate if the url is valid
+            if( WC_Quickpay_Helper::is_url( $link->url ) ) 
+            {
+            	$woocommerce->cart->empty_cart();
+
+				return array(
+					'result' 	=> 'success',
+					'redirect'	=>  $link->url
+				);
+            }
 		}
 
         /**
@@ -610,95 +649,6 @@ function init_quickpay_gateway() {
 
 
 		/**
-		* generate_quickpay_form function.
-		*
-		* Generates the form with data we are going to submit to Quickpay.
-		*
-		* @access private 
-		* @return void
-		*/	
-		private function generate_quickpay_form( $order_id ) 
-		{
-			$order 				= new WC_Quickpay_Order( $order_id );
-			$is_subscription	= FALSE;
-
-            $submit_text = $this->s('quickpay_paybuttontext');
-            $redirect_text = $this->s( 'quickpay_redirectText' );
-                
-            $is_subscription = $order->contains_subscription();
-
-            if( WC_Quickpay_Helper::option_is_enabled( $this->s( 'quickpay_viabill' ) ) AND isset( $_GET['gwType'] )  AND ( strtolower( $_GET['gwType'] ) === 'viabill' ) ) 
-            {
-				$cardtypelock = strtolower( $_GET['gwType'] );
-			} 
-            else if( WC_Quickpay_Helper::option_is_enabled( $this->s( 'quickpay_mobilepay' ) ) AND isset( $_GET['gwType'] )  AND ( strtolower( $_GET['gwType'] ) === 'mobilepay' ) ) 
-            {
-                $cardtypelock = strtolower( $_GET['gwType'] );
-            }
-            else 
-            {
-				$cardtypelock = $this->s( 'quickpay_cardtypelock' );
-			}
-            
-            $payment_method = strtolower($order->payment_method);
-            
-            $params = array(
-                'agreement_id'      => $this->s( 'quickpay_agreement_id' ),
-                'merchant_id'       => $this->s( 'quickpay_merchantid' ),
-                'subscription'      => $is_subscription ? 1 : 0,
-                'description'       => $is_subscription ? 'qp_subscriber' : '',
-                'language'          => $this->get_gateway_language(),
-                'order_id'          => WC_Quickpay_Helper::prefix_order_number( $order->get_clean_order_number() ),
-                'amount'            => WC_Quickpay_Helper::price_multiply( $is_subscription ? WC_Subscriptions_Order::get_total_initial_payment( $order ) : $order->get_total() ),
-                'currency'          => $this->get_gateway_currency(),
-                'continueurl'       => $order->get_continue_url(),
-                'cancelurl'         => $order->get_cancellation_url(),
-                'callbackurl'       => $order->get_callback_url(),
-                'autocapture'       => WC_Quickpay_Helper::option_is_enabled( $this->s( 'quickpay_autocapture') ),
-                'autofee'           => WC_Quickpay_Helper::option_is_enabled( $this->s( 'quickpay_autofee' ) ),
-                'payment_methods'   => apply_filters('woocommerce_quickpay_cardtypelock_' . $payment_method, $cardtypelock, $payment_method),
-                'branding_id'       => $this->s( 'quickpay_branding_id' ),
-                'version'           => 'v10',
-                'google_analytics_tracking_id' => $this->s( 'quickpay_google_analytics_tracking_id' ),
-                'google_analytics_client_id' => $this->s('quickpay_google_analytics_client_id')
-                //'splitcapture'      => $is_subscription ? '' : WC_Quickpay_Helper::option_is_enabled( $this->s( 'quickpay_splitcapture' ) )
-            );
-            
-            ksort( $params );
-            
-            $checksum = hash_hmac("sha256", implode( " ", $params ), $this->s('quickpay_agreement_apikey') );
-            
-return <<<HTML
-            
-                <p>{$redirect_text}</p>
-                
-                <form action="https://payment.quickpay.net/" method="post" id="quickpay-payment-form">
-                    <input type="hidden" name="version" value="{$params['version']}">
-                    <input type="hidden" name="merchant_id" value="{$params['merchant_id']}">
-                    <input type="hidden" name="agreement_id" value="{$params['agreement_id']}">
-                    <input type="hidden" name="subscription" value="{$params['subscription']}">
-                    <input type="hidden" name="description" value="{$params['description']}">
-                    <input type="hidden" name="language" value="{$params['language']}">
-                    <input type="hidden" name="order_id" value="{$params['order_id']}">
-                    <input type="hidden" name="amount" value="{$params['amount']}">
-                    <input type="hidden" name="currency" value="{$params['currency']}">
-                    <input type="hidden" name="continueurl" value="{$params['continueurl']}">
-                    <input type="hidden" name="cancelurl" value="{$params['cancelurl']}">
-                    <input type="hidden" name="callbackurl" value="{$params['callbackurl']}">
-                    <input type="hidden" name="autocapture" value="{$params['autocapture']}">
-                    <input type="hidden" name="autofee" value="{$params['autofee']}">
-                    <input type="hidden" name="payment_methods" value="{$params['payment_methods']}">
-                    <input type="hidden" name="branding_id" value="{$params['branding_id']}">
-                    <input type="hidden" name="google_analytics_tracking_id" value="{$params['google_analytics_tracking_id']}">
-                    <input type="hidden" name="google_analytics_client_id" value="{$params['google_analytics_client_id']}">
-                    <input type="hidden" name="checksum" value="{$checksum}">
-                    <input type="submit" value="{$submit_text}" /><br>
-                </form> 
-HTML;
-		}
-
-
-		/**
 		* on_order_cancellation function.
 		*
 		* Is called when a customer cancels the payment process from the Quickpay payment window.
@@ -752,11 +702,12 @@ HTML;
                 
                 // Get last transaction in operation history
                 $transaction = end( $json->operations );
-
+                
                 // Is the transaction accepted?
-                if( $json->accepted ) {
+                if( $json->accepted ) 
+                {
                     // Add order transaction fee
-					//$order->add_transaction_fee( $transaction->fee ); 
+                    $order->add_transaction_fee( $transaction->amount );
 
                     // Perform action depending on the operation status type
                     try 
@@ -828,8 +779,14 @@ HTML;
                                 // Set the transaction order ID
                                 $order->set_transaction_order_id( $json->order_id );
                             
+                                // Remove payment link
+                                $order->delete_payment_link();
+                            
+                                // Remove payment ID, now we have the transaction ID
+                                $order->delete_payment_id();
+
                                 // Subscription authorization
-                                if( isset( $json->description ) AND $json->description == 'qp_subscriber' )
+                                if( isset( $json->type ) AND strtolower($json->type) == 'subscription' )
                                 {
                                     // Create subscription instance
                                     $subscription = new WC_Quickpay_API_Subscription( $request_body );
@@ -855,7 +812,7 @@ HTML;
                                     }                                
                                 }
 
-                                // Regular authorization
+                                // Regular payment authorization
                                 else
                                 {
                                     // Write a note to the order history
@@ -976,9 +933,14 @@ HTML;
 		{
 			echo "<h3>Quickpay, v" . WCQP_VERSION . "</h3>";
 			echo "<p>" . __('Allows you to receive payments via Quickpay.', 'woo-quickpay') . "</p>";
+            
+            do_action('woocommerce_quickpay_settings_table_before');
+            
 			echo "<table class=\"form-table\">";
 						$this->generate_settings_html();
 			echo "</table";
+            
+            do_action('woocommerce_quickpay_settings_table_after');
 		}
 
 

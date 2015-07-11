@@ -83,4 +83,68 @@ class WC_Quickpay_API_Transaction extends WC_Quickpay_API
 
     	return $this->resource_data->test_mode;
     }
+    
+   	/**
+	* create function.
+	* 
+	* Creates a new payment via the API
+	*
+	* @access public
+	* @param  WC_Quickpay_Order $order
+	* @return object
+	* @throws Quickpay_API_Exception
+	*/   
+    public function create( WC_Quickpay_Order $order ) 
+    {     
+        $base_params = array(
+            'currency' => WC_QP()->get_gateway_currency(),
+        );
+        
+        $order_params = $order->get_transaction_params();
+        
+        $params = array_merge( $base_params, $order_params );
+        
+    	$payment = $this->post( '/', $params);
+        
+        return $payment;
+    }  
+    
+    
+    /**
+	* create_link function.
+	* 
+	* Creates a new payment link via the API
+	*
+	* @access public
+	* @param  int $transaction_id
+	* @param  WC_Quickpay_Order $order
+	* @return object
+	* @throws Quickpay_API_Exception
+	*/   
+    public function create_link( $transaction_id, WC_Quickpay_Order $order ) 
+    {         
+        $cardtypelock = WC_QP()->s( 'quickpay_cardtypelock' );
+
+        $payment_method = strtolower($order->payment_method);
+
+        $base_params = array(
+            'language'                      => WC_QP()->get_gateway_language(),
+            'currency'                      => WC_QP()->get_gateway_currency(),
+            'callbackurl'                   => WC_Quickpay_Helper::get_callback_url(),
+            'autocapture'                   => WC_Quickpay_Helper::option_is_enabled( WC_QP()->s( 'quickpay_autocapture') ),
+            'autofee'                       => WC_Quickpay_Helper::option_is_enabled( WC_QP()->s( 'quickpay_autofee' ) ),
+            'payment_methods'               => apply_filters('woocommerce_quickpay_cardtypelock_' . $payment_method, $cardtypelock, $payment_method),
+            'branding_id'                   => WC_QP()->s( 'quickpay_branding_id' ),
+            'google_analytics_tracking_id'  => WC_QP()->s( 'quickpay_google_analytics_tracking_id' ),
+            'google_analytics_client_id'    => WC_QP()->s('quickpay_google_analytics_client_id')
+        );
+        
+        $order_params = $order->get_transaction_link_params();
+        
+        $params = array_merge( $base_params, $order_params );
+
+    	$payment_link = $this->put( sprintf( '%d/link', $transaction_id ), $params);
+
+        return $payment_link;
+    } 
 }

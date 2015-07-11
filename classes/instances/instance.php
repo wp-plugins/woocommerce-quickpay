@@ -6,6 +6,11 @@ class WC_Quickpay_Instance extends WC_Quickpay {
     
     public function __construct() {
         parent::__construct();
+        
+        $this->supports = array( 
+            'products', 
+            'refunds'
+        );
     }
     
     public function setup() {

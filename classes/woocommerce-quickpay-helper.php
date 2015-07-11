@@ -72,17 +72,6 @@ class WC_Quickpay_Helper {
 
 
 	/**
-	* enqueue_javascript_redirect function.
-	*
-	* @access public static
-	* @return string
-	*/
-	public static function enqueue_javascript_redirect() {
-	    wp_enqueue_script( 'quickpay-redirect', plugins_url( '/assets/javascript/redirect.js', dirname( __FILE__ ) ), array( 'jquery' ) );
-	}
-
-
-	/**
 	* enqueue_stylesheet function.
 	*
 	* @access public static
@@ -127,6 +116,32 @@ class WC_Quickpay_Helper {
 	*/	
 	public static function prefix_order_number( $order_number ) {
 		return substr( md5( time()), 0, 3 ) . '-QP-' . str_pad( $order_number , 4, 0, STR_PAD_LEFT );
+	}
+    
+    
+	/**
+	* get_callback_url function
+	*
+	* Returns the order's main callback url
+	*
+	* @access public
+	* @return string
+	*/	
+	public static function get_callback_url() {
+		return add_query_arg( 'wc-api', 'WC_Quickpay', home_url( '/' ) );
+	}
+
+
+	/**
+	* is_url function
+	*
+	* Checks if a string is a URL
+	*
+	* @access public
+	* @return string
+	*/	
+	public static function is_url( $url ) {
+		return ! filter_var($url, FILTER_VALIDATE_URL) === FALSE;
 	}
 }
 ?>

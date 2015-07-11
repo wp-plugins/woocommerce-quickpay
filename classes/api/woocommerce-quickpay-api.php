@@ -109,10 +109,32 @@ class WC_Quickpay_API
         return $this->execute('POST', $form);
     }	
 
+
    	/**
-	* set_url function.
+	* put function.
 	*
-	* Takes an API request string and appends it to the API url
+	* Performs an API PUT request
+	*
+	* @access public
+	* @return object
+	*/    
+    public function put( $path, $form = array() ) 
+    {
+    	// Instantiate a new instance
+        $this->remote_instance();
+
+        // Set the request params
+        $this->set_url( $path );
+
+        // Start the request and return the response
+        return $this->execute('PUT', $form);
+    }	
+
+
+   	/**
+	* execute function.
+	*
+	* Executes the API request
 	*
 	* @access public
 	* @param  string $request_type
@@ -128,7 +150,7 @@ class WC_Quickpay_API
  		// If additional data is delivered, we will send it along with the API request
  		if( is_array( $form ) && ! empty( $form ) )
  		{
- 			curl_setopt( $this->ch, CURLOPT_POSTFIELDS, $form );
+ 			curl_setopt( $this->ch, CURLOPT_POSTFIELDS, http_build_query($form) );
  		}
 
  		// Execute the request and decode the response to JSON
@@ -141,7 +163,22 @@ class WC_Quickpay_API
  		// Throw an exception to handle the error
  		if( $response_code > 299 ) 
  		{
-            if( isset( $this->resource_data->message) ) 
+            if( isset($this->resource_data->errors) ) 
+            {
+                $error_messages = "";
+                foreach( $this->resource_data->errors as $error_field => $error_descriptions ) 
+                {
+                    $error_messages .= "{$error_field}: ";
+
+                    foreach( $error_descriptions as $error_description )
+                    {
+                        $error_messages .= "{$error_description}<br />\n";
+                    }
+                }
+                
+                throw new Quickpay_API_Exception( $error_messages, $response_code );
+            }
+            else if( isset( $this->resource_data->message) ) 
             {
                 throw new Quickpay_API_Exception( $this->resource_data->message, $response_code ); 
             }
@@ -151,7 +188,7 @@ class WC_Quickpay_API
             }
  			
  		}
-
+        
  		// Everything went well, return the resource data object.
  		return $this->resource_data;
  	}
@@ -190,7 +227,8 @@ class WC_Quickpay_API
             curl_setopt( $this->ch, CURLOPT_HTTPHEADER, array(
             	'Authorization: Basic ' . base64_encode(':' . WC_QP()->s( 'quickpay_apikey' ) ),
                 'Accept-Version: v10',
-                'Accept: application/json', 
+                'Accept: application/json',
+                'QuickPay-Callback-Url: ' . WC_Quickpay_Helper::get_callback_url(),
             ));
 		}
 

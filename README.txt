@@ -1,27 +1,47 @@
-=== WooCommerce Quickpay ===
+=== WooCommerce QuickPay ===
 Contributors: PerfectSolution
 Donate link: http://perfect-solution.dk/donation
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration, woocommerce, woocommerce quickpay, payment, payment gateway
 Requires at least: 4.0.0
 Tested up to: 4.2.2
-Stable tag: 4.1.0
+Stable tag: 4.2.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Integrates your Quickpay payment gateway into your WooCommerce installation.
+Integrates your QuickPay payment gateway into your WooCommerce installation.
 
 == Description ==
-With WooCommerce Quickpay, you are able to integrate your Quickpay gateway to your WooCommerce install. With a wide list of API features including secure capturing, refunding and cancelling payments directly from your WooCommerce order overview. This is only a part of the many features found in this plugin.
+With WooCommerce QuickPay, you are able to integrate your QuickPay gateway to your WooCommerce install. With a wide list of API features including secure capturing, refunding and cancelling payments directly from your WooCommerce order overview. This is only a part of the many features found in this plugin.
 
 == Installation ==
 1. Upload the 'woocommerce-quickpay' folder to /wp-content/plugins/ on your server.
 2. Log in to Wordpress administration, click on the 'Plugins' tab.
-3. Find WooCommerce Quickpay in the plugin overview and activate it.
-4. Go to WooCommerce -> Settings -> Payment Gateways -> Quickpay.
-5. Fill in all the fields in the "Quickpay account" section and save the settings.
+3. Find WooCommerce QuickPay in the plugin overview and activate it.
+4. Go to WooCommerce -> Settings -> Payment Gateways -> QuickPay.
+5. Fill in all the fields in the "QuickPay account" section and save the settings.
 6. You are good to go.
 
 == Changelog ==
+
+= 4.2.0 = 
+* Deprecating WC_Quickpay::get_callback_url(). Use WC_Quickpay_Helper::get_callback_url() instead.
+* Add QuickPay-Callback-Url to API request headers.
+* Correct name casing in title and descriptions.
+* Add method_title to instances
+* Prefix subinstances with "QuickPay - %s" for usability reasons.
+* Disable subscription support on MobilePay, Paii and ViaBill
+* Add support for payment links. Removing old FORM method.
+* Add tooltip descriptions to settings page
+* Improved API error logging
+* Add jQuery multiselect to 'Credit card icons'
+* Change subscription description from "qp_subscription" to "woocommerce-subscription"
+* Removed all settings and files related to the auto-redirect.
+* Remove setting: quickpay_merchantid
+* Remove setting: quickpay_redirect
+* Remove setting: quickpay_redirectText
+* Remove setting: quickpay_paybuttontext
+* Add setting: quickpay_custom_variables
+* Remove old tags before 3.0.6
 
 = 4.1.0 =
 * Add Google Analytics support

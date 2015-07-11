@@ -8,7 +8,9 @@ class WC_Quickpay_ViaBill extends WC_Quickpay_Instance {
         parent::__construct();
         
         // Get gateway variables
-        $this->id = 'ViaBill';
+        $this->id = 'viabill';
+        
+        $this->method_title = 'QuickPay - ViaBill';
         
         $this->setup();
         
