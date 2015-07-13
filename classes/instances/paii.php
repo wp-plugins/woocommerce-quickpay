@@ -1,6 +1,6 @@
 <?php
 
-class WC_Quickpay_Paii extends WC_Quickpay_Instance {
+class WC_QuickPay_Paii extends WC_QuickPay_Instance {
     
     public $main_settings = NULL;
     
@@ -10,7 +10,7 @@ class WC_Quickpay_Paii extends WC_Quickpay_Instance {
         // Get gateway variables
         $this->id = 'paii';
         
-        $this->method_title = 'Quickpay - Paii';
+        $this->method_title = 'QuickPay - Paii';
         
         $this->setup();
         
@@ -57,8 +57,8 @@ class WC_Quickpay_Paii extends WC_Quickpay_Instance {
                 'quickpay_paybuttontext' => array(
                     'title' => __( 'Text on payment button', 'woo-quickpay' ), 
                     'type' => 'text', 
-                    'description' => __( 'This text will show on the button which opens the Quickpay window.', 'woo-quickpay' ), 
-                    'default' => __( 'Open secure Quickpay window.', 'woo-quickpay' )
+                    'description' => __( 'This text will show on the button which opens the QuickPay window.', 'woo-quickpay' ), 
+                    'default' => __( 'Open secure QuickPay window.', 'woo-quickpay' )
                 ),
         );
     }

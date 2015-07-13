@@ -1,6 +1,6 @@
 <?php
 
-class WC_Quickpay_Instance extends WC_Quickpay {
+class WC_QuickPay_Instance extends WC_QuickPay {
     
     public $main_settings = NULL;
     
@@ -53,9 +53,9 @@ class WC_Quickpay_Instance extends WC_Quickpay {
             'tab' => 'checkout',
             'section' => 'wc_quickpay'
         );
-        echo "<h3>Quickpay - {$this->id}, v" . WCQP_VERSION . "</h3>";
-        echo "<p>" . sprintf(__('Allows you to receive payments via Quickpay %s.', 'woo-quickpay'), $this->id) . "</p>";
-        echo "<p>" . sprintf(__('This module has it\'s main configuration inside the \'Quickpay\' tab.', 'woo-quickpay'), 's') . "</p>";
+        echo "<h3>QuickPay - {$this->id}, v" . WCQP_VERSION . "</h3>";
+        echo "<p>" . sprintf(__('Allows you to receive payments via QuickPay %s.', 'woo-quickpay'), $this->id) . "</p>";
+        echo "<p>" . sprintf(__('This module has it\'s main configuration inside the \'QuickPay\' tab.', 'woo-quickpay'), 's') . "</p>";
         echo "<p>" . sprintf(__('Click <a href="%s">here</a> to access the main configuration.', 'woo-quickpay'), add_query_arg( $main_settings_args, admin_url('admin.php'))) . "</p>";
         echo "<table class=\"form-table\">";
                     $this->generate_settings_html();

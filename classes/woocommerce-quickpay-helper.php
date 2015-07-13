@@ -1,15 +1,15 @@
 <?php
 /**
- * WC_Quickpay_Helper class
+ * WC_QuickPay_Helper class
  *
- * @class 		WC_Quickpay_Helper
+ * @class 		WC_QuickPay_Helper
  * @version		1.0.0
- * @package		Woocommerce_Quickpay/Classes
+ * @package		Woocommerce_QuickPay/Classes
  * @category	Class
  * @author 		PerfectSolution
  */
 
-class WC_Quickpay_Helper {
+class WC_QuickPay_Helper {
 
 
 	/**
@@ -109,7 +109,7 @@ class WC_Quickpay_Helper {
 	/**
 	* prefix_order_number function.
 	*
-	* Returns a prefixed order number to prevent duplicate order numbers in Quickpay
+	* Returns a prefixed order number to prevent duplicate order numbers in QuickPay
 	*
 	* @access public static 
 	* @return string
@@ -128,7 +128,7 @@ class WC_Quickpay_Helper {
 	* @return string
 	*/	
 	public static function get_callback_url() {
-		return add_query_arg( 'wc-api', 'WC_Quickpay', home_url( '/' ) );
+		return add_query_arg( 'wc-api', 'WC_QuickPay', home_url( '/' ) );
 	}
 
 

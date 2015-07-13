@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce QuickPay v4.2.0\n"
+"Project-Id-Version: WooCommerce QuickPay v4.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-07-11 09:21:25+0000\n"
+"PO-Revision-Date: 2015-07-13 08:45:23+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -28,8 +28,8 @@ msgstr "Betaling fejlede"
 #: woocommerce-quickpay.php:673
 #: woocommerce-quickpay.php:957
 #@ woo-quickpay
-msgid "Quickpay Payment"
-msgstr "Quickpay betaling"
+msgid "QuickPay Payment"
+msgstr "QuickPay betaling"
 
 #: woocommerce-quickpay.php:673
 #@ woo-quickpay
@@ -45,51 +45,51 @@ msgstr "Betaling annulleret"
 #: classes/instances/paii.php:36
 #: classes/instances/viabill.php:36
 #: classes/woocommerce-quickpay-settings.php:26
-#: classes/woocommerce-quickpay-settings.php:115
-#: classes/woocommerce-quickpay-settings.php:124
-#: classes/woocommerce-quickpay-settings.php:132
-#: classes/woocommerce-quickpay-settings.php:249
+#: classes/woocommerce-quickpay-settings.php:121
+#: classes/woocommerce-quickpay-settings.php:130
+#: classes/woocommerce-quickpay-settings.php:138
+#: classes/woocommerce-quickpay-settings.php:255
 #@ woo-quickpay
 msgid "Enable/Disable"
 msgstr "Aktiver/Deaktiver"
 
-#: classes/woocommerce-quickpay-settings.php:69
+#: classes/woocommerce-quickpay-settings.php:75
 #@ woo-quickpay
 msgid "Language"
 msgstr "Sprog"
 
-#: classes/woocommerce-quickpay-settings.php:70
+#: classes/woocommerce-quickpay-settings.php:76
 #@ woo-quickpay
 msgid "Payment Window Language"
 msgstr "Sprog i betalingsvinduet"
 
-#: classes/woocommerce-quickpay-settings.php:86
+#: classes/woocommerce-quickpay-settings.php:92
 #: woocommerce-quickpay.php:1027
 #@ woo-quickpay
 msgid "Currency"
 msgstr "Valuta"
 
-#: classes/woocommerce-quickpay-settings.php:87
+#: classes/woocommerce-quickpay-settings.php:93
 #@ woo-quickpay
 msgid "Choose your currency. Please make sure to use the same currency as in your WooCommerce currency settings."
 msgstr "Vælg en valuta. Bemærk, at der skal bruges samme valuta som du benytter i WooCommerce."
 
-#: classes/woocommerce-quickpay-settings.php:113
+#: classes/woocommerce-quickpay-settings.php:119
 #@ woo-quickpay
 msgid "Allow autocapture"
 msgstr "Accepter autocapture"
 
-#: classes/woocommerce-quickpay-settings.php:116
+#: classes/woocommerce-quickpay-settings.php:122
 #@ woo-quickpay
 msgid "Automatically capture payments."
 msgstr "Træk betalinger automatisk"
 
-#: classes/woocommerce-quickpay-settings.php:130
+#: classes/woocommerce-quickpay-settings.php:136
 #@ woo-quickpay
 msgid "Capture on complete"
 msgstr "Træk betaling når ordren er completed."
 
-#: classes/woocommerce-quickpay-settings.php:133
+#: classes/woocommerce-quickpay-settings.php:139
 #@ woo-quickpay
 msgid "When enabled quickpay payments will automatically be captured when order state is set to \"Complete\"."
 msgstr "Når det er aktiveret, vil quickpay-betalinger automatisk blive trukket, når ordrestatus bliver sat til \"Complete\"."
@@ -97,7 +97,7 @@ msgstr "Når det er aktiveret, vil quickpay-betalinger automatisk blive trukket,
 #: classes/instances/mobilepay.php:46
 #: classes/instances/paii.php:46
 #: classes/instances/viabill.php:46
-#: classes/woocommerce-quickpay-settings.php:144
+#: classes/woocommerce-quickpay-settings.php:150
 #@ woo-quickpay
 msgid "Title"
 msgstr "Titel"
@@ -105,15 +105,15 @@ msgstr "Titel"
 #: classes/instances/mobilepay.php:48
 #: classes/instances/paii.php:48
 #: classes/instances/viabill.php:48
-#: classes/woocommerce-quickpay-settings.php:146
+#: classes/woocommerce-quickpay-settings.php:152
 #@ woo-quickpay
 msgid "This controls the title which the user sees during checkout."
-msgstr "Tekst der vises som navn på betalingsmetoden, når dine kunder vælger Quickpay i checkout-processen."
+msgstr "Tekst der vises som navn på betalingsmetoden, når dine kunder vælger QuickPay i checkout-processen."
 
 #: classes/instances/mobilepay.php:52
 #: classes/instances/paii.php:52
 #: classes/instances/viabill.php:52
-#: classes/woocommerce-quickpay-settings.php:151
+#: classes/woocommerce-quickpay-settings.php:157
 #@ woo-quickpay
 msgid "Customer Message"
 msgstr "Besked til kunde"
@@ -121,7 +121,7 @@ msgstr "Besked til kunde"
 #: classes/instances/mobilepay.php:54
 #: classes/instances/paii.php:54
 #: classes/instances/viabill.php:54
-#: classes/woocommerce-quickpay-settings.php:153
+#: classes/woocommerce-quickpay-settings.php:159
 #@ woo-quickpay
 msgid "This controls the description which the user sees during checkout."
 msgstr "Dette styrer hvilken betalingsmetodebeskrivelse, der skal vises til dine kunder under checkout-processen."
@@ -137,25 +137,25 @@ msgstr "Tekst på betalingsknap"
 #: classes/instances/paii.php:60
 #: classes/instances/viabill.php:60
 #@ woo-quickpay
-msgid "This text will show on the button which opens the Quickpay window."
-msgstr "Denne tekst vises på den knap, der åbner Quickpay betalingsvinduet."
+msgid "This text will show on the button which opens the QuickPay window."
+msgstr "Denne tekst vises på den knap, der åbner QuickPay betalingsvinduet."
 
 #: classes/instances/mobilepay.php:61
 #: classes/instances/paii.php:61
 #: classes/instances/viabill.php:61
 #@ woo-quickpay
-msgid "Open secure Quickpay window."
-msgstr "Åbn sikkert Quickpay-vindue."
+msgid "Open secure QuickPay window."
+msgstr "Åbn sikkert QuickPay-vindue."
 
-#: classes/woocommerce-quickpay-settings.php:250
+#: classes/woocommerce-quickpay-settings.php:256
 #@ woo-quickpay
 msgid "Automatically capture the first payment of a subscription when order is complete."
 msgstr "Træk første betaling for et abonnement automatisk når en ordre er afsluttet."
 
 #: woocommerce-quickpay.php:935
 #@ woo-quickpay
-msgid "Allows you to receive payments via Quickpay."
-msgstr "Modtag betalinger via Quickpay"
+msgid "Allows you to receive payments via QuickPay."
+msgstr "Modtag betalinger via QuickPay"
 
 #: woocommerce-quickpay.php:996
 #@ woo-quickpay
@@ -231,17 +231,17 @@ msgstr "Da du har annulleret betalingen, er din ordre ikke gennemført. Fortsæt
 #: classes/instances/mobilepay.php:43
 #: classes/instances/paii.php:43
 #: classes/instances/viabill.php:43
-#: classes/woocommerce-quickpay-settings.php:141
+#: classes/woocommerce-quickpay-settings.php:147
 #@ woo-quickpay
 msgid "Shop setup"
 msgstr "Shop-indstillinger"
 
-#: classes/woocommerce-quickpay-settings.php:158
+#: classes/woocommerce-quickpay-settings.php:164
 #@ woo-quickpay
 msgid "Email instructions"
 msgstr "Email-instruktioner"
 
-#: classes/woocommerce-quickpay-settings.php:160
+#: classes/woocommerce-quickpay-settings.php:166
 #@ woo-quickpay
 msgid "Instructions that will be added to emails."
 msgstr "Eventuelle instruktioner, der bliver tilføjet ordrebekræftelsen"
@@ -272,17 +272,17 @@ msgstr "Du er nu ved at SPLIT-trække denne betaling. Det betyder at du vil træ
 msgid "You are about to SPLIT CAPTURE and FINALIZE this payment. This means that you will capture the amount stated in the input field and that you can no longer capture money from this transaction."
 msgstr "Du er ved at SPLIT-trække og FÆRDIGGØRE denne betaling. Det betyder at beløbet i feltet vil blive trukket, og at transaktionen vil være lukket for yderligere hævninger."
 
-#: classes/woocommerce-quickpay-settings.php:165
+#: classes/woocommerce-quickpay-settings.php:171
 #@ woo-quickpay
 msgid "Credit card icons"
 msgstr "Kreditkort-ikoner"
 
-#: classes/woocommerce-quickpay-settings.php:196
+#: classes/woocommerce-quickpay-settings.php:202
 #@ woo-quickpay
 msgid "Credit card icons maximum height"
 msgstr "Maximumhøjde på kreditkortikonerne."
 
-#: classes/woocommerce-quickpay-settings.php:198
+#: classes/woocommerce-quickpay-settings.php:204
 #@ woo-quickpay
 msgid "Set the maximum pixel height of the credit card icons shown on the frontend."
 msgstr "Sæt den maximale pixelhøjde på kreditkortikonerne der vises i din shop."
@@ -300,8 +300,8 @@ msgstr "Ordrens transaktionsstatus tillader ikke refunderinger."
 
 #: classes/api/woocommerce-quickpay-api-transaction.php:62
 #@ woo-quickpay
-msgid "Pending - check your Quickpay manager"
-msgstr "Afventer - kontrollér din Quickpay Manager for mere information."
+msgid "Pending - check your QuickPay manager"
+msgstr "Afventer - kontrollér din QuickPay Manager for mere information."
 
 #: classes/woocommerce-quickpay-exceptions.php:59
 #, php-format
@@ -309,17 +309,17 @@ msgstr "Afventer - kontrollér din Quickpay Manager for mere information."
 msgid "An error occured. For more information check out the <strong>%s</strong> logs inside <strong>WooCommerce -> System Status -> Logs</strong>."
 msgstr "Der opstod en fejl. For mere information, gå til logfilen <strong>%s</strong> i <strong>WooCommerce -> System status -> Logs</strong>"
 
-#: classes/woocommerce-quickpay-settings.php:37
+#: classes/woocommerce-quickpay-settings.php:43
 #@ woo-quickpay
 msgid "Agreement id"
 msgstr "Agreement ID"
 
-#: classes/woocommerce-quickpay-settings.php:43
+#: classes/woocommerce-quickpay-settings.php:49
 #@ woo-quickpay
 msgid "Api key"
 msgstr "API nøgle"
 
-#: classes/woocommerce-quickpay-settings.php:49
+#: classes/woocommerce-quickpay-settings.php:55
 #@ woo-quickpay
 msgid "Private key"
 msgstr "Privat nøgle"
@@ -361,14 +361,14 @@ msgstr "Transaktionen for #%s fejlede"
 #: woocommerce-quickpay.php:839
 #, php-format
 #@ woo-quickpay
-msgid "Quickpay status code: %s."
-msgstr "Quickpay statuskode: %s."
+msgid "QuickPay status code: %s."
+msgstr "QuickPay statuskode: %s."
 
 #: woocommerce-quickpay.php:840
 #, php-format
 #@ woo-quickpay
-msgid "Quickpay status message: %s."
-msgstr "Quickpay statusbesked: %s."
+msgid "QuickPay status message: %s."
+msgstr "QuickPay statusbesked: %s."
 
 #: woocommerce-quickpay.php:841
 #, php-format
@@ -414,22 +414,22 @@ msgstr "Test-transaktion"
 msgid "Payment Window - Integration"
 msgstr "Betalingsvindue - Integration"
 
-#: classes/woocommerce-quickpay-settings.php:56
+#: classes/woocommerce-quickpay-settings.php:62
 #@ woo-quickpay
 msgid "API - Integration"
 msgstr "API - Integration"
 
-#: classes/woocommerce-quickpay-settings.php:59
+#: classes/woocommerce-quickpay-settings.php:65
 #@ woo-quickpay
 msgid "Api User key"
 msgstr "API Key til din API bruger"
 
-#: classes/woocommerce-quickpay-settings.php:100
+#: classes/woocommerce-quickpay-settings.php:106
 #@ woo-quickpay
 msgid "Payment methods"
 msgstr "Betalingsmetoder"
 
-#: classes/woocommerce-quickpay-settings.php:102
+#: classes/woocommerce-quickpay-settings.php:108
 #@ woo-quickpay
 msgid "Default: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://tech.quickpay.net/appendixes/payment-methods/</b>"
 msgstr "Standard: creditcard. Indtast de korttyper, du ønsker at aktivere (kommasepareret). Se en liste med de mulige betalingstyper her: <b>http://tech.quickpay.net/appendixes/payment-methods/</b>"
@@ -437,13 +437,13 @@ msgstr "Standard: creditcard. Indtast de korttyper, du ønsker at aktivere (komm
 #: classes/instances/instance.php:57
 #, php-format
 #@ woo-quickpay
-msgid "Allows you to receive payments via Quickpay %s."
-msgstr "Tillader modtagelse af betalinger gennem Quickpay %s"
+msgid "Allows you to receive payments via QuickPay %s."
+msgstr "Tillader modtagelse af betalinger gennem QuickPay %s"
 
 #: classes/instances/instance.php:58
 #@ woo-quickpay
-msgid "This module has it's main configuration inside the 'Quickpay' tab."
-msgstr "Dette moduls primære konfiguration ligger under fanen 'Quickpay'."
+msgid "This module has it's main configuration inside the 'QuickPay' tab."
+msgstr "Dette moduls primære konfiguration ligger under fanen 'QuickPay'."
 
 #: classes/instances/instance.php:59
 #, php-format
@@ -492,37 +492,37 @@ msgstr "ViaBill"
 msgid "Pay with ViaBill"
 msgstr "Betal med ViaBill"
 
-#: classes/woocommerce-quickpay-settings.php:106
+#: classes/woocommerce-quickpay-settings.php:112
 #@ woo-quickpay
 msgid "Branding ID"
 msgstr "Branding ID"
 
-#: classes/woocommerce-quickpay-settings.php:108
+#: classes/woocommerce-quickpay-settings.php:114
 #@ woo-quickpay
 msgid "Leave empty if you have no custom branding options"
 msgstr "Lad feltet være tomt, hvis du ikke har nogen branding indstillinger"
 
-#: classes/woocommerce-quickpay-settings.php:122
+#: classes/woocommerce-quickpay-settings.php:128
 #@ woo-quickpay
 msgid "Enable autofee"
 msgstr "Aktiver automatiske gebyrer (autofee)"
 
-#: classes/woocommerce-quickpay-settings.php:125
+#: classes/woocommerce-quickpay-settings.php:131
 #@ woo-quickpay
 msgid "If enabled, the fee charged by the acquirer will be calculated and added to the transaction amount."
 msgstr "Hvis aktiveret vil indløserens transaktionsgebyr blive pålagt kunden."
 
-#: classes/woocommerce-quickpay-settings.php:204
+#: classes/woocommerce-quickpay-settings.php:210
 #@ woo-quickpay
 msgid "Google Analytics"
 msgstr "Google Analytics"
 
-#: classes/woocommerce-quickpay-settings.php:207
+#: classes/woocommerce-quickpay-settings.php:213
 #@ woo-quickpay
 msgid "Tracking ID"
 msgstr "Tracking ID"
 
-#: classes/woocommerce-quickpay-settings.php:214
+#: classes/woocommerce-quickpay-settings.php:220
 #@ woo-quickpay
 msgid "Client ID"
 msgstr "Client ID"
@@ -545,12 +545,12 @@ msgstr "Transaktions ordre ID: %s"
 msgid "Transaction state: %s"
 msgstr "Transaktionsstatus: %s"
 
-#: classes/woocommerce-quickpay-settings.php:209
+#: classes/woocommerce-quickpay-settings.php:215
 #@ woo-quickpay
 msgid "Your Google Analytics tracking ID. Digits only."
 msgstr "Dit Google Analytics tracking ID. Kun tal."
 
-#: classes/woocommerce-quickpay-settings.php:216
+#: classes/woocommerce-quickpay-settings.php:222
 #@ woo-quickpay
 msgid "Your Google Analytics client ID. Digits only."
 msgstr "Dit Google Analytics Client ID. Kun tal."
@@ -638,93 +638,103 @@ msgstr "Leveringsmetode"
 msgid "Enable QuickPay Payment"
 msgstr "Aktiver QuickPay Payment"
 
-#: classes/woocommerce-quickpay-settings.php:39
+#: classes/woocommerce-quickpay-settings.php:45
 #@ woo-quickpay
 msgid "Your Payment Window agreement id. Found in the \"Integration\" tab inside the QuickPay manager."
 msgstr "Dit \"Payment Window\" agreement  ID. ID'et kan findes under fanen \"Integration\" i din QuickPay manager."
 
-#: classes/woocommerce-quickpay-settings.php:45
+#: classes/woocommerce-quickpay-settings.php:51
 #@ woo-quickpay
 msgid "Your Payment Window agreement API key. Found in the \"Integration\" tab inside the QuickPay manager."
 msgstr "Din \"Payment Window\" agreement API key. Nøglen kan findes under fanen \"Integration\" i din QuickPay manager."
 
-#: classes/woocommerce-quickpay-settings.php:51
+#: classes/woocommerce-quickpay-settings.php:57
 #@ woo-quickpay
 msgid "Your Payment Window agreement private key. Found in the \"Integration\" tab inside the QuickPay manager."
 msgstr "Din \"Payment Window\" agreement private key. Nøglen kan findes under fanen \"Integration\" i din QuickPay manager."
 
-#: classes/woocommerce-quickpay-settings.php:61
+#: classes/woocommerce-quickpay-settings.php:67
 #@ woo-quickpay
 msgid "Your API User's key. Create a separate API user in the \"Users\" tab inside the QuickPay manager."
 msgstr "Din API-brugers api-key. Opret en separat bruger med tilstrækkelige API-rettigheder under fanden \"Users\" i din QuickPay manager."
 
-#: classes/woocommerce-quickpay-settings.php:147
+#: classes/woocommerce-quickpay-settings.php:153
 #@ woo-quickpay
 msgid "QuickPay"
 msgstr "QuickPay"
 
-#: classes/woocommerce-quickpay-settings.php:167
+#: classes/woocommerce-quickpay-settings.php:173
 #@ woo-quickpay
 msgid "Choose the card icons you wish to show next to the QuickPay payment option in your shop."
 msgstr "Markér de kortikoner du vil vise ud for QuickPay betalingsmetoden i din shop."
 
-#: classes/woocommerce-quickpay-settings.php:172
+#: classes/woocommerce-quickpay-settings.php:178
 #@ woo-quickpay
 msgid "Select icons"
 msgstr "Vælg ikoner"
 
-#: classes/woocommerce-quickpay-settings.php:223
+#: classes/woocommerce-quickpay-settings.php:229
 #@ woo-quickpay
 msgid "Custom Variables"
 msgstr "Variabel Data"
 
-#: classes/woocommerce-quickpay-settings.php:226
+#: classes/woocommerce-quickpay-settings.php:232
 #@ woo-quickpay
 msgid "Select Information"
 msgstr "Vælg information"
 
-#: classes/woocommerce-quickpay-settings.php:231
+#: classes/woocommerce-quickpay-settings.php:237
 #@ woo-quickpay
 msgid "Selected options will store the specific data on your transaction inside your QuickPay Manager."
 msgstr "De valgte punkter vil gemme den specifikke data på transaktionen i din QuickPay Manager."
 
-#: classes/woocommerce-quickpay-settings.php:235
+#: classes/woocommerce-quickpay-settings.php:241
 #@ woo-quickpay
 msgid "Select order data"
 msgstr "Vælg ordredata"
 
-#: classes/woocommerce-quickpay-settings.php:247
+#: classes/woocommerce-quickpay-settings.php:253
 #@ woo-quickpay
 msgid "Autocapture first payment"
 msgstr "Træk første betaling automatisk"
 
-#: classes/woocommerce-quickpay-settings.php:271
+#: classes/woocommerce-quickpay-settings.php:277
 #@ woo-quickpay
 msgid "Billing: Complete Customer Details"
 msgstr "Faktura: Komplet kundeinformation"
 
-#: classes/woocommerce-quickpay-settings.php:272
+#: classes/woocommerce-quickpay-settings.php:278
 #@ woo-quickpay
 msgid "Browser: User Agent"
 msgstr "Browser: User Agent"
 
-#: classes/woocommerce-quickpay-settings.php:273
+#: classes/woocommerce-quickpay-settings.php:279
 #@ woo-quickpay
 msgid "Customer: Email Address"
 msgstr "Kunde: Email-adresse"
 
-#: classes/woocommerce-quickpay-settings.php:274
+#: classes/woocommerce-quickpay-settings.php:280
 #@ woo-quickpay
 msgid "Customer: Phone Number"
 msgstr "Kunde: Telefonnummer"
 
-#: classes/woocommerce-quickpay-settings.php:275
+#: classes/woocommerce-quickpay-settings.php:281
 #@ woo-quickpay
 msgid "Shipping: Complete Customer Details"
 msgstr "Levering: Komplet kundeinformation"
 
-#: classes/woocommerce-quickpay-settings.php:276
+#: classes/woocommerce-quickpay-settings.php:282
 #@ woo-quickpay
 msgid "Shipping: Shipping Method"
 msgstr "Levering: Leveringsmetode"
+
+#: classes/woocommerce-quickpay-settings.php:37
+#@ woo-quickpay
+msgid "Merchant id"
+msgstr "Merchant id"
+
+#: classes/woocommerce-quickpay-settings.php:39
+#@ woo-quickpay
+msgid "Your Payment Window agreement merchant id. Found in the \"Integration\" tab inside the QuickPay manager."
+msgstr "Dit \"Payment Window\" agreement merchant ID. ID'et kan findes under fanen \"Integration\" i din QuickPay manager."
 

@@ -1,18 +1,18 @@
 <?php
 /**
- * WC_Quickpay_API_Transaction class
+ * WC_QuickPay_API_Transaction class
  * 
  * Used for common methods shared between payments and subscriptions
  *
- * @class 		WC_Quickpay_API_Payment
+ * @class 		WC_QuickPay_API_Payment
  * @since		4.0.0
- * @package		Woocommerce_Quickpay/Classes
+ * @package		Woocommerce_QuickPay/Classes
  * @category	Class
  * @author 		PerfectSolution
  * @docs        http://tech.quickpay.net/api/services/?scope=merchant
  */
 
-class WC_Quickpay_API_Transaction extends WC_Quickpay_API
+class WC_QuickPay_API_Transaction extends WC_QuickPay_API
 {
     /**
 	* get_current_type function.
@@ -28,7 +28,7 @@ class WC_Quickpay_API_Transaction extends WC_Quickpay_API
         
         if( ! is_object( $last_operation ) ) 
         {
-            throw new Quickpay_API_Exception( "Malformed operation response", 0 ); 
+            throw new QuickPay_API_Exception( "Malformed operation response", 0 ); 
         }
         
         return $last_operation->type;
@@ -42,13 +42,13 @@ class WC_Quickpay_API_Transaction extends WC_Quickpay_API
 	*
 	* @access public
 	* @return void
-	* @throws Quickpay_API_Exception
+	* @throws QuickPay_API_Exception
 	*/ 
 	public function get_last_operation() 
 	{
 		if( ! is_object( $this->resource_data ) ) 
 		{
-			throw new Quickpay_API_Exception( 'No API payment resource data available.', 0 );
+			throw new QuickPay_API_Exception( 'No API payment resource data available.', 0 );
 		}
 
 		// Loop through all the operations and return only the operations that were successful (based on the qp_status_code and pending mode).
@@ -59,7 +59,7 @@ class WC_Quickpay_API_Transaction extends WC_Quickpay_API
         $last_operation = end( $successful_operations );
         
         if( $last_operation->pending == TRUE ) {
-            $last_operation->type = __( 'Pending - check your Quickpay manager', 'woo-quickpay' );   
+            $last_operation->type = __( 'Pending - check your QuickPay manager', 'woo-quickpay' );   
         }
         
 		return $last_operation;
@@ -73,12 +73,12 @@ class WC_Quickpay_API_Transaction extends WC_Quickpay_API
 	*
 	* @access public
 	* @return boolean
-	* @throws Quickpay_API_Exception
+	* @throws QuickPay_API_Exception
 	*/     
     public function is_test() 
     {
 		if( ! is_object( $this->resource_data ) ) {
-			throw new Quickpay_API_Exception( 'No API payment resource data available.', 0 );
+			throw new QuickPay_API_Exception( 'No API payment resource data available.', 0 );
 		}
 
     	return $this->resource_data->test_mode;
@@ -90,11 +90,11 @@ class WC_Quickpay_API_Transaction extends WC_Quickpay_API
 	* Creates a new payment via the API
 	*
 	* @access public
-	* @param  WC_Quickpay_Order $order
+	* @param  WC_QuickPay_Order $order
 	* @return object
-	* @throws Quickpay_API_Exception
+	* @throws QuickPay_API_Exception
 	*/   
-    public function create( WC_Quickpay_Order $order ) 
+    public function create( WC_QuickPay_Order $order ) 
     {     
         $base_params = array(
             'currency' => WC_QP()->get_gateway_currency(),
@@ -117,11 +117,11 @@ class WC_Quickpay_API_Transaction extends WC_Quickpay_API
 	*
 	* @access public
 	* @param  int $transaction_id
-	* @param  WC_Quickpay_Order $order
+	* @param  WC_QuickPay_Order $order
 	* @return object
-	* @throws Quickpay_API_Exception
+	* @throws QuickPay_API_Exception
 	*/   
-    public function create_link( $transaction_id, WC_Quickpay_Order $order ) 
+    public function create_link( $transaction_id, WC_QuickPay_Order $order ) 
     {         
         $cardtypelock = WC_QP()->s( 'quickpay_cardtypelock' );
 
@@ -130,9 +130,9 @@ class WC_Quickpay_API_Transaction extends WC_Quickpay_API
         $base_params = array(
             'language'                      => WC_QP()->get_gateway_language(),
             'currency'                      => WC_QP()->get_gateway_currency(),
-            'callbackurl'                   => WC_Quickpay_Helper::get_callback_url(),
-            'autocapture'                   => WC_Quickpay_Helper::option_is_enabled( WC_QP()->s( 'quickpay_autocapture') ),
-            'autofee'                       => WC_Quickpay_Helper::option_is_enabled( WC_QP()->s( 'quickpay_autofee' ) ),
+            'callbackurl'                   => WC_QuickPay_Helper::get_callback_url(),
+            'autocapture'                   => WC_QuickPay_Helper::option_is_enabled( WC_QP()->s( 'quickpay_autocapture') ),
+            'autofee'                       => WC_QuickPay_Helper::option_is_enabled( WC_QP()->s( 'quickpay_autofee' ) ),
             'payment_methods'               => apply_filters('woocommerce_quickpay_cardtypelock_' . $payment_method, $cardtypelock, $payment_method),
             'branding_id'                   => WC_QP()->s( 'quickpay_branding_id' ),
             'google_analytics_tracking_id'  => WC_QP()->s( 'quickpay_google_analytics_tracking_id' ),

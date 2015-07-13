@@ -1,14 +1,14 @@
 <?php
 /**
- * WC_Quickpay_Log class
+ * WC_QuickPay_Log class
  *
- * @class 		WC_Quickpay_Log
+ * @class 		WC_QuickPay_Log
  * @since		4.0.0
- * @package		Woocommerce_Quickpay/Classes
+ * @package		Woocommerce_QuickPay/Classes
  * @category	Logs
  * @author 		PerfectSolution
  */
-class WC_Quickpay_Log {
+class WC_QuickPay_Log {
     
     /* The domain handler used to name the log */
     private $_domain = 'woocommerce-quickpay';

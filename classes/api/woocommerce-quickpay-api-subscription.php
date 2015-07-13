@@ -1,16 +1,16 @@
 <?php
 /**
- * WC_Quickpay_API_Subscription class
+ * WC_QuickPay_API_Subscription class
  *
- * @class 		WC_Quickpay_API_Subscription
+ * @class 		WC_QuickPay_API_Subscription
  * @since		4.0.0
- * @package		Woocommerce_Quickpay/Classes
+ * @package		Woocommerce_QuickPay/Classes
  * @category	Class
  * @author 		PerfectSolution
  * @docs        http://tech.quickpay.net/api/services/?scope=merchant
  */
 
-class WC_Quickpay_API_Subscription extends WC_Quickpay_API_Transaction
+class WC_QuickPay_API_Subscription extends WC_QuickPay_API_Transaction
 {
   	/**
 	* __construct function.
@@ -42,11 +42,11 @@ class WC_Quickpay_API_Subscription extends WC_Quickpay_API_Transaction
 	* Creates a new subscription via the API
 	*
 	* @access public
-	* @param  WC_Quickpay_Order $order
+	* @param  WC_QuickPay_Order $order
 	* @return object
-	* @throws Quickpay_API_Exception
+	* @throws QuickPay_API_Exception
 	*/   
-    public function create( WC_Quickpay_Order $order ) 
+    public function create( WC_QuickPay_Order $order ) 
     {     
         return parent::create( $order );
     } 
@@ -55,13 +55,13 @@ class WC_Quickpay_API_Subscription extends WC_Quickpay_API_Transaction
    	/**
 	* capture function.
 	* 
-	* Sends a 'recurring' request to the Quickpay API
+	* Sends a 'recurring' request to the QuickPay API
 	*
 	* @access public
 	* @param  int $transaction_id
 	* @param  int $amount
 	* @return void
-	* @throws Quickpay_API_Exception
+	* @throws QuickPay_API_Exception
 	*/   
     public function recurring( $subscription_id, $order, $amount = NULL ) 
     {
@@ -72,18 +72,18 @@ class WC_Quickpay_API_Subscription extends WC_Quickpay_API_Transaction
             $amount = WC_Subscriptions_Order::get_recurring_total( $order );
         }
         
-        if( ! $order instanceof WC_Quickpay_Order ) {
-            $order = new WC_Quickpay_Order( $order->id );
+        if( ! $order instanceof WC_QuickPay_Order ) {
+            $order = new WC_QuickPay_Order( $order->id );
         }
         
-        $order_number = WC_Quickpay_Helper::prefix_order_number( $order->get_clean_order_number() );
+        $order_number = WC_QuickPay_Helper::prefix_order_number( $order->get_clean_order_number() );
                 
     	$request = $this->post( sprintf( '%d/%s', $subscription_id, "recurring" ), array( 
-            'amount' => WC_Quickpay_Helper::price_multiply( $amount ),
+            'amount' => WC_QuickPay_Helper::price_multiply( $amount ),
             'order_id' => $order_number,
             'currency' => WC_QP()->get_gateway_currency(),
             'auto_capture' => TRUE,
-            'autofee' => WC_Quickpay_Helper::option_is_enabled( WC_QP()->s( 'quickpay_autofee' ) )
+            'autofee' => WC_QuickPay_Helper::option_is_enabled( WC_QP()->s( 'quickpay_autofee' ) )
         ) );
     }
     
@@ -91,12 +91,12 @@ class WC_Quickpay_API_Subscription extends WC_Quickpay_API_Transaction
   	/**
 	* cancel function.
 	* 
-	* Sends a 'cancel' request to the Quickpay API
+	* Sends a 'cancel' request to the QuickPay API
 	*
 	* @access public
 	* @param  int $subscription_id
 	* @return void
-	* @throws Quickpay_API_Exception
+	* @throws QuickPay_API_Exception
 	*/   
     public function cancel( $subscription_id ) 
     {

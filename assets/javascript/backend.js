@@ -1,13 +1,13 @@
 ( function( $ ) {
 	"use strict";
 
-	Quickpay.prototype.init = function() {
+	QuickPay.prototype.init = function() {
 		// Add event handlers
 		this.actionBox.on( 'click', '[data-action]', $.proxy( this.callAction, this ) );
 		this.actionBox.on( 'keyup', ':input[name="quickpay_split_amount"]', $.proxy( this.balancer, this ) );
 	};
 
-	Quickpay.prototype.callAction = function( e ) {
+	QuickPay.prototype.callAction = function( e ) {
 		e.preventDefault();
 		var target = $( e.target );
 		var action = target.attr( 'data-action' );
@@ -20,25 +20,25 @@
 		}	
 	};
 
-	Quickpay.prototype.capture = function() {
+	QuickPay.prototype.capture = function() {
 		var request = this.request( {
 			quickpay_action : 'capture'
 		} );
 	};
 
-	Quickpay.prototype.cancel = function() {
+	QuickPay.prototype.cancel = function() {
 		var request = this.request( {
 			quickpay_action : 'cancel'
 		} );
 	};
 
-	Quickpay.prototype.refund = function() {
+	QuickPay.prototype.refund = function() {
 		var request = this.request( {
 			quickpay_action : 'refund'
 		} );
 	};
 
-	Quickpay.prototype.split_capture = function() {
+	QuickPay.prototype.split_capture = function() {
 		var request = this.request( {
 			quickpay_action : 'splitcapture',
 			amount : parseFloat( $('#quickpay_split_amount').val() ),
@@ -46,7 +46,7 @@
 		} );
 	};
 
-	Quickpay.prototype.split_finalize = function() {
+	QuickPay.prototype.split_finalize = function() {
 		var request = this.request( {
 			quickpay_action : 'splitcapture',
 			amount : parseFloat( $('#quickpay_split_amount').val() ),
@@ -54,7 +54,7 @@
 		} );
 	};
 
-	Quickpay.prototype.request = function( dataObject ) {
+	QuickPay.prototype.request = function( dataObject ) {
 		var that = this;
 		var request = $.ajax( {
 			type : 'POST',
@@ -74,7 +74,7 @@
 		return request;
 	};
 
-	Quickpay.prototype.showLoader = function( e, show ) {
+	QuickPay.prototype.showLoader = function( e, show ) {
 		if( show ) {
 			this.actionBox.append( this.loaderBox );
 		} else {
@@ -82,7 +82,7 @@
 		}
 	};
 
-	Quickpay.prototype.balancer = function(e) {
+	QuickPay.prototype.balancer = function(e) {
 		var remainingField = $('.quickpay-remaining');
 		var balanceField = $('.quickpay-balance');
 		var amountField = $(':input[name="quickpay_split_amount"]');
@@ -102,7 +102,7 @@
 	};
     
     
-    QuickpayAjaxStatus.prototype.init = function() {
+    QuickPayAjaxStatus.prototype.init = function() {
         var self = this;
         if (this.elements.length) {
             this.elements.each(function() {
@@ -121,7 +121,7 @@
         }
     };
     
-    QuickpayAjaxStatus.prototype.handleTransactionData = function($element, transactionData) {
+    QuickPayAjaxStatus.prototype.handleTransactionData = function($element, transactionData) {
         $.each(transactionData, function(key, data) {
             var contentElement = $element.find('[data-quickpay-show="' + key + '"]');
                 contentElement.text(data.value);
@@ -139,7 +139,7 @@
         });
     };
     
-    QuickpayAjaxStatus.prototype.ajaxGetTransaction = function(data) {
+    QuickPayAjaxStatus.prototype.ajaxGetTransaction = function(data) {
         var promise = $.Deferred();
         $.getJSON(ajaxurl, $.extend( {}, { action : 'quickpay_get_transaction_information' }, data ), function(response) {
            promise.resolve(response); 
@@ -149,17 +149,17 @@
     
 	// DOM ready
 	$(function() {
-		new Quickpay().init();
-        new QuickpayAjaxStatus().init();
+		new QuickPay().init();
+        new QuickPayAjaxStatus().init();
 	});
 
-	function Quickpay() {
+	function QuickPay() {
 		this.actionBox 	= $( '#quickpay-payment-actions' );
 		this.postID		= $( '#post_ID' );
 		this.loaderBox 	= $( '<div class="loader"></div>');
 	}
     
-    function QuickpayAjaxStatus() {
+    function QuickPayAjaxStatus() {
         this.elements = $( '[data-quickpay-transaction-id]' );
     }
 

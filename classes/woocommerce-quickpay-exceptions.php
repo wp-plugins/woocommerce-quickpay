@@ -1,6 +1,6 @@
 <?php
 
-class Quickpay_Exception extends Exception
+class QuickPay_Exception extends Exception
 {
 	/**
 	 * Contains a log object instance
@@ -21,7 +21,7 @@ class Quickpay_Exception extends Exception
         // make sure everything is assigned properly
         parent::__construct($message, $code, $previous);
 
-        $this->log = new WC_Quickpay_Log();
+        $this->log = new WC_QuickPay_Log();
     }
 
 
@@ -36,10 +36,10 @@ class Quickpay_Exception extends Exception
 	public function write_to_logs() 
 	{
 		$this->log->separator();
-		$this->log->add( 'Quickpay Exception file: ' . $this->getFile() );
-		$this->log->add( 'Quickpay Exception line: ' . $this->getLine() );
-		$this->log->add( 'Quickpay Exception code: ' . $this->getCode() );
-		$this->log->add( 'Quickpay Exception message: ' . $this->getMessage() );
+		$this->log->add( 'QuickPay Exception file: ' . $this->getFile() );
+		$this->log->add( 'QuickPay Exception line: ' . $this->getLine() );
+		$this->log->add( 'QuickPay Exception code: ' . $this->getCode() );
+		$this->log->add( 'QuickPay Exception message: ' . $this->getMessage() );
 		$this->log->separator();
 	}
 
@@ -64,7 +64,7 @@ class Quickpay_Exception extends Exception
 }
 
 
-class Quickpay_API_Exception extends Quickpay_Exception 
+class QuickPay_API_Exception extends QuickPay_Exception 
 {
   	
   	/**
@@ -78,10 +78,10 @@ class Quickpay_API_Exception extends Quickpay_Exception
 	public function write_to_logs() 
 	{
 		$this->log->separator();
-		$this->log->add( 'Quickpay API Exception file: ' . $this->getFile() );
-		$this->log->add( 'Quickpay API Exception line: ' . $this->getLine() );
-		$this->log->add( 'Quickpay API Exception code: ' . $this->getCode() );
-		$this->log->add( 'Quickpay API Exception message: ' . $this->getMessage() );
+		$this->log->add( 'QuickPay API Exception file: ' . $this->getFile() );
+		$this->log->add( 'QuickPay API Exception line: ' . $this->getLine() );
+		$this->log->add( 'QuickPay API Exception code: ' . $this->getCode() );
+		$this->log->add( 'QuickPay API Exception message: ' . $this->getMessage() );
 		$this->log->separator();
 	}
 }

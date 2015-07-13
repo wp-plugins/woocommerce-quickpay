@@ -33,6 +33,12 @@ class WC_Quickpay_Settings {
 					'type' => 'title',
 					'title' => __( 'Payment Window - Integration', 'woo-quickpay' ),
 				),
+					'quickpay_merchantid' => array(
+                        'title' => __('Merchant id', 'woo-quickpay'),
+                        'type' => 'text',
+                        'description' => __('Your Payment Window agreement merchant id. Found in the "Integration" tab inside the QuickPay manager.', 'woo-quickpay'),
+                        'desc_tip' => true
+                    ),
 					'quickpay_agreement_id' => array(
                         'title' => __('Agreement id', 'woo-quickpay'),
                         'type' => 'text',

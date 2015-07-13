@@ -1,16 +1,16 @@
 <?php
 /**
- * WC_Quickpay_API_Payment class
+ * WC_QuickPay_API_Payment class
  *
- * @class 		WC_Quickpay_API_Payment
+ * @class 		WC_QuickPay_API_Payment
  * @since		4.0.0
- * @package		Woocommerce_Quickpay/Classes
+ * @package		Woocommerce_QuickPay/Classes
  * @category	Class
  * @author 		PerfectSolution
  * @docs        http://tech.quickpay.net/api/services/?scope=merchant
  */
 
-class WC_Quickpay_API_Payment extends WC_Quickpay_API_Transaction
+class WC_QuickPay_API_Payment extends WC_QuickPay_API_Transaction
 {
   	/**
 	* __construct function.
@@ -42,11 +42,11 @@ class WC_Quickpay_API_Payment extends WC_Quickpay_API_Transaction
 	* Creates a new payment via the API
 	*
 	* @access public
-	* @param  WC_Quickpay_Order $order
+	* @param  WC_QuickPay_Order $order
 	* @return object
-	* @throws Quickpay_API_Exception
+	* @throws QuickPay_API_Exception
 	*/   
-    public function create( WC_Quickpay_Order $order ) 
+    public function create( WC_QuickPay_Order $order ) 
     {
         return parent::create( $order );
     }           
@@ -55,13 +55,13 @@ class WC_Quickpay_API_Payment extends WC_Quickpay_API_Transaction
    	/**
 	* capture function.
 	* 
-	* Sends a 'capture' request to the Quickpay API
+	* Sends a 'capture' request to the QuickPay API
 	*
 	* @access public
 	* @param  int $transaction_id
 	* @param  int $amount
 	* @return void
-	* @throws Quickpay_API_Exception
+	* @throws QuickPay_API_Exception
 	*/   
     public function capture( $transaction_id, $order, $amount = NULL ) 
     {
@@ -72,19 +72,19 @@ class WC_Quickpay_API_Payment extends WC_Quickpay_API_Transaction
             $amount = $order->get_total();   
         }
         
-    	$request = $this->post( sprintf( '%d/%s', $transaction_id, "capture" ), array( 'amount' => WC_Quickpay_Helper::price_multiply( $amount ) ) );
+    	$request = $this->post( sprintf( '%d/%s', $transaction_id, "capture" ), array( 'amount' => WC_QuickPay_Helper::price_multiply( $amount ) ) );
     }
 
 
   	/**
 	* cancel function.
 	* 
-	* Sends a 'cancel' request to the Quickpay API
+	* Sends a 'cancel' request to the QuickPay API
 	*
 	* @access public
 	* @param  int $transaction_id
 	* @return void
-	* @throws Quickpay_API_Exception
+	* @throws QuickPay_API_Exception
 	*/   
     public function cancel( $transaction_id ) 
     {
@@ -95,13 +95,13 @@ class WC_Quickpay_API_Payment extends WC_Quickpay_API_Transaction
    	/**
 	* refund function.
 	* 
-	* Sends a 'refund' request to the Quickpay API
+	* Sends a 'refund' request to the QuickPay API
 	*
 	* @access public
 	* @param  int $transaction_id
 	* @param  int $amount
 	* @return void
-	* @throws Quickpay_API_Exception
+	* @throws QuickPay_API_Exception
 	*/   
     public function refund( $transaction_id, $order, $amount = NULL ) 
     {
@@ -112,7 +112,7 @@ class WC_Quickpay_API_Payment extends WC_Quickpay_API_Transaction
             $amount = $order->get_total();   
         }
     
-        $request = $this->post( sprintf( '%d/%s', $transaction_id, "refund" ), array( 'amount' =>  WC_Quickpay_Helper::price_multiply( $amount ) ) );
+        $request = $this->post( sprintf( '%d/%s', $transaction_id, "refund" ), array( 'amount' =>  WC_QuickPay_Helper::price_multiply( $amount ) ) );
     }
 
 

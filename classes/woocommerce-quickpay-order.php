@@ -1,15 +1,15 @@
 <?php
 /**
- * WC_Quickpay_Order class
+ * WC_QuickPay_Order class
  *
- * @class 		WC_Quickpay_Order
+ * @class 		WC_QuickPay_Order
  * @version		1.0.0
- * @package		Woocommerce_Quickpay/Classes
+ * @package		Woocommerce_QuickPay/Classes
  * @category	Class
  * @author 		PerfectSolution
  */
 
-class WC_Quickpay_Order extends WC_Order {
+class WC_QuickPay_Order extends WC_Order {
 
 	/**
 	* get_continue_url function
@@ -64,8 +64,8 @@ class WC_Quickpay_Order extends WC_Order {
 	* @return string
 	*/	
 	public static function get_callback_url() {
-        trigger_error('WC_Quickpay_Order::get_callback_url() is deprecated since 4.2.0. Use WC_Quickpay_Helper::get_callback_url() instead.');
-		return WC_Quickpay_Helper::get_callback_url();
+        trigger_error('WC_QuickPay_Order::get_callback_url() is deprecated since 4.2.0. Use WC_QuickPay_Helper::get_callback_url() instead.');
+		return WC_QuickPay_Helper::get_callback_url();
 	}
 
 
@@ -223,7 +223,7 @@ class WC_Quickpay_Order extends WC_Order {
 	public function contains_subscription() {
 		$has_subscription = FALSE;
 
-		if( WC_Quickpay_Helper::subscription_is_active() ) {
+		if( WC_QuickPay_Helper::subscription_is_active() ) {
 			$has_subscription = WC_Subscriptions_Order::order_contains_subscription( $this );
 		}	
 
@@ -243,15 +243,15 @@ class WC_Quickpay_Order extends WC_Order {
     
     public function add_transaction_fee( $total_amount_with_fee ) {
 		$order_total = $this->get_total() ;
-		$order_total_formatted = WC_Quickpay_Helper::price_multiply( $order_total );
+		$order_total_formatted = WC_QuickPay_Helper::price_multiply( $order_total );
         
         $fee = $total_amount_with_fee - $order_total_formatted;
 
         if( $fee > 0) {
 			$order_total_updated = $order_total_formatted + $fee;
-			$order_total_updated = WC_Quickpay_Helper::price_normalize( $order_total_updated );
+			$order_total_updated = WC_QuickPay_Helper::price_normalize( $order_total_updated );
 
-			$transaction_fee = WC_Quickpay_Helper::price_normalize( $fee );
+			$transaction_fee = WC_QuickPay_Helper::price_normalize( $fee );
 
 			$order_meta_item_id = woocommerce_add_order_item( $this->id,  array(
 				'order_item_name' => __( 'Payment Fee', 'woo-quickpay' ),
@@ -282,7 +282,7 @@ class WC_Quickpay_Order extends WC_Order {
     {
         $renewal_failure = FALSE; 
         
-        if( WC_Quickpay_Helper::subscription_is_active() )
+        if( WC_QuickPay_Helper::subscription_is_active() )
         {
             $renewal_failure = (WC_Subscriptions_Renewal_Order::is_renewal( $this ) AND $this->status == 'failed');
         }
@@ -302,7 +302,7 @@ class WC_Quickpay_Order extends WC_Order {
 	public function note( $message ) 
     {
 		if( isset( $message ) ) {
-			$this->add_order_note( 'Quickpay: ' . $message );
+			$this->add_order_note( 'QuickPay: ' . $message );
 		}
 	}
 
@@ -329,7 +329,7 @@ class WC_Quickpay_Order extends WC_Order {
         }
         
         $params = array_merge(array(
-            'order_id'      => WC_Quickpay_Helper::prefix_order_number( $this->get_clean_order_number() ),
+            'order_id'      => WC_QuickPay_Helper::prefix_order_number( $this->get_clean_order_number() ),
         ), $this->get_custom_variables());
         
         return array_merge( $params, $params_subscription );
@@ -355,10 +355,10 @@ class WC_Quickpay_Order extends WC_Order {
         }
         
         return array(
-            'order_id'      => WC_Quickpay_Helper::prefix_order_number( $this->get_clean_order_number() ),
+            'order_id'      => WC_QuickPay_Helper::prefix_order_number( $this->get_clean_order_number() ),
             'continueurl'   => $this->get_continue_url(),
             'cancelurl'     => $this->get_cancellation_url(),
-            'amount'        => WC_Quickpay_Helper::price_multiply( $amount ),
+            'amount'        => WC_QuickPay_Helper::price_multiply( $amount ),
         );
 	}
     

@@ -1,16 +1,16 @@
 <?php
 /**
- * WC_Quickpay_API class
+ * WC_QuickPay_API class
  *
- * @class 		WC_Quickpay_API
+ * @class 		WC_QuickPay_API
  * @since		4.0.0
- * @package		Woocommerce_Quickpay/Classes
+ * @package		Woocommerce_QuickPay/Classes
  * @category	Class
  * @author 		PerfectSolution
  * @docs        http://tech.quickpay.net/api/services/?scope=merchant
  */
 
-class WC_Quickpay_API 
+class WC_QuickPay_API 
 {
 
     /**
@@ -140,7 +140,7 @@ class WC_Quickpay_API
 	* @param  string $request_type
 	* @param  array  $form
 	* @return object
-	* @throws Quickpay_API_Exception
+	* @throws QuickPay_API_Exception
 	*/   	
  	public function execute( $request_type, $form = array() ) 
  	{
@@ -176,15 +176,15 @@ class WC_Quickpay_API
                     }
                 }
                 
-                throw new Quickpay_API_Exception( $error_messages, $response_code );
+                throw new QuickPay_API_Exception( $error_messages, $response_code );
             }
             else if( isset( $this->resource_data->message) ) 
             {
-                throw new Quickpay_API_Exception( $this->resource_data->message, $response_code ); 
+                throw new QuickPay_API_Exception( $this->resource_data->message, $response_code ); 
             }
             else 
             {
-                throw new Quickpay_API_Exception( (string) $this->resource_data, $response_code );
+                throw new QuickPay_API_Exception( (string) $this->resource_data, $response_code );
             }
  			
  		}
@@ -228,7 +228,7 @@ class WC_Quickpay_API
             	'Authorization: Basic ' . base64_encode(':' . WC_QP()->s( 'quickpay_apikey' ) ),
                 'Accept-Version: v10',
                 'Accept: application/json',
-                'QuickPay-Callback-Url: ' . WC_Quickpay_Helper::get_callback_url(),
+                'QuickPay-Callback-Url: ' . WC_QuickPay_Helper::get_callback_url(),
             ));
 		}
 

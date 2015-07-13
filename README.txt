@@ -4,7 +4,7 @@ Donate link: http://perfect-solution.dk/donation
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration, woocommerce, woocommerce quickpay, payment, payment gateway
 Requires at least: 4.0.0
 Tested up to: 4.2.2
-Stable tag: 4.2.0
+Stable tag: 4.2.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,8 +23,13 @@ With WooCommerce QuickPay, you are able to integrate your QuickPay gateway to yo
 
 == Changelog ==
 
+= 4.2.1 = 
+* Reintroduce merchant ID for support usability
+* Update keys
+* Update translations
+
 = 4.2.0 = 
-* Deprecating WC_Quickpay::get_callback_url(). Use WC_Quickpay_Helper::get_callback_url() instead.
+* Deprecating WC_QuickPay::get_callback_url(). Use WC_QuickPay_Helper::get_callback_url() instead.
 * Add QuickPay-Callback-Url to API request headers.
 * Correct name casing in title and descriptions.
 * Add method_title to instances
@@ -75,26 +80,26 @@ With WooCommerce QuickPay, you are able to integrate your QuickPay gateway to yo
 * Stop forcing HTTP on callbacks.
 
 = 4.0.3 =
-* Add WC_Quickpay_API_Subscription::is_action_allowed
+* Add WC_QuickPay_API_Subscription::is_action_allowed
 * Manual AJAX actions handled for subscriptions
 
 = 4.0.2 = 
 * Add mobilepay option
-* Disabled viabill since the Quickpay API is not ready to support it yet.
+* Disabled viabill since the QuickPay API is not ready to support it yet.
 
 = 4.0.1 =
 * Add version parameter to the payment request
 
 = 4.0.0 =
-* Now only supports the new Quickpay gateway platform
-* Introduce exception class Quickpay_Exception
-* Introduce exception class Quickpay_API_Exception
-* Introduce WC_Quickpay::process_refund to support "auto" gateway refunds
-* Introduce WC_Quickpay_API
-* Introduce WC_Quickpay_API_Payment
-* Introduce WC_Quickpay_API_Subscription
-* Introduce WC_Quickpay_Log - Debugging information is now added to WooCommerce system logs.
-* Remove WC_Quickpay_Request
+* Now only supports the new QuickPay gateway platform
+* Introduce exception class QuickPay_Exception
+* Introduce exception class QuickPay_API_Exception
+* Introduce WC_QuickPay::process_refund to support "auto" gateway refunds
+* Introduce WC_QuickPay_API
+* Introduce WC_QuickPay_API_Payment
+* Introduce WC_QuickPay_API_Subscription
+* Introduce WC_QuickPay_Log - Debugging information is now added to WooCommerce system logs.
+* Remove WC_QuickPay_Request
 * Remove donation link
 
 = 3.0.9 = 
@@ -151,7 +156,7 @@ With WooCommerce QuickPay, you are able to integrate your QuickPay gateway to yo
 * Fixed an undefined variable notices
 * Switched from WC_Subscriptions_Order::get_price_per_period to WC_Subscriptions_Order::get_recurring_total
 * Added payment transaction fee to orders
-* Changed name to WooCommerce Quickpay
+* Changed name to WooCommerce QuickPay
 
 = 2.1.1 =
 * Fixes FATAL ERROR bug on checkout introduced in 2.1.0
@@ -169,9 +174,9 @@ With WooCommerce QuickPay, you are able to integrate your QuickPay gateway to yo
 * Fixed viabill cardtypelock
 
 = 2.0.7 =
-* Fixed bug where server complains about Quickpay SSL certificate.
+* Fixed bug where server complains about QuickPay SSL certificate.
 * Changed iBill labels to viaBill
-* Added the possibility to set a custom text on the checkout page right before the customer is redirected to the Quickpay payment window.
+* Added the possibility to set a custom text on the checkout page right before the customer is redirected to the QuickPay payment window.
 * Added the possibility to set a custom label to credit card and viaBill.
 
 = 2.0.6 =
@@ -179,7 +184,7 @@ With WooCommerce QuickPay, you are able to integrate your QuickPay gateway to yo
 * Fixed undefined variable notice "params_string".
 
 = 2.0.4 =
-* Implemented a tweak to the "WooCommerce Sequential Order Numbers"-support which should fix any problems with WooCommerce Quickpay + Sequential order numbers.
+* Implemented a tweak to the "WooCommerce Sequential Order Numbers"-support which should fix any problems with WooCommerce QuickPay + Sequential order numbers.
 
 = 2.0.3 =
 * Fixing issues with cardtypelocks
@@ -195,14 +200,14 @@ With WooCommerce QuickPay, you are able to integrate your QuickPay gateway to yo
 * Refactoring the majority of existing methods to save a lot of code and implementing better API error handling.
 
 = 1.4.0 =
-* Implement WC_Quickpay::create_md5() which manually sets the order of the md5 checkpoints. 
+* Implement WC_QuickPay::create_md5() which manually sets the order of the md5 checkpoints. 
 * Should fix payment integration and missing mails sent out to customers after implementation of protocol v7.
 
 = 1.3.11 =
-* Plugin now uses Quickpay version 7
+* Plugin now uses QuickPay version 7
 
 = 1.3.10 =
-* Feature: Allow customers to select between credit card and iBill when choosing Quickpay as pay method. Credit card is ticket as default option. 		NB: You are required to have an agreement with iBill in order to use this feature properly. 
+* Feature: Allow customers to select between credit card and iBill when choosing QuickPay as pay method. Credit card is ticket as default option. 		NB: You are required to have an agreement with iBill in order to use this feature properly. 
 
 = 1.3.9 =
 * 'Capture on complete' now also works on bulk actions.
@@ -239,7 +244,7 @@ With WooCommerce QuickPay, you are able to integrate your QuickPay gateway to yo
 * Bugfix: Capturing payments from WooCommerce backend caused problems due to missing order_total param in cURL request.
 	
 = 1.2.1 =
-* More minor changes to the payment cancellations from Quickpay form.
+* More minor changes to the payment cancellations from QuickPay form.
 
 = 1.2.0 =
 * Major rewriting of payments cancelled by customer.
@@ -259,7 +264,7 @@ With WooCommerce QuickPay, you are able to integrate your QuickPay gateway to yo
 * Implemented payment state and transaction id in order overview.
 * Implemented payment handling in single order view.
 * Added support for split payments
-* If turned on in Quickpay Manager, shop owners may now split up the transactions.
+* If turned on in QuickPay Manager, shop owners may now split up the transactions.
 * Rewritten and added a lot of the class methods.
 
 = 1.0.1 =
@@ -267,4 +272,4 @@ With WooCommerce QuickPay, you are able to integrate your QuickPay gateway to yo
 
 == Upgrade Notice ==
 = 4.0.0 =
-4.0.0 is a major update. 4.0.0 will only work with the new Quickpay v10 manager, so it is advised to consult QuickPay before upgrading. Also, the plugin will require additional setup before working! It is advised to test this version out before upgrading in production.
+4.0.0 is a major update. 4.0.0 will only work with the new QuickPay v10 manager, so it is advised to consult QuickPay before upgrading. Also, the plugin will require additional setup before working! It is advised to test this version out before upgrading in production.
