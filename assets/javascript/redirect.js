@@ -3,8 +3,8 @@
 
 	// DOM ready
 	$(function() {
-		var qpform = $('#quickpay_payment_form');
-		if (qpform !== undefined && qpform !== null) {
+		var qpform = $('#quickpay-payment-form');
+		if (qpform.length) {
 			setTimeout(function () {
 				qpform.submit();
 			}, 5000);
