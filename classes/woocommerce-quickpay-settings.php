@@ -1,14 +1,14 @@
 <?php
 /**
- * WC_Quickpay_Settings class
+ * WC_QuickPay_Settings class
  *
- * @class 		WC_Quickpay_Settings
+ * @class 		WC_QuickPay_Settings
  * @version		1.0.0
- * @package		Woocommerce_Quickpay/Classes
+ * @package		Woocommerce_QuickPay/Classes
  * @category	Class
  * @author 		PerfectSolution
  */
-class WC_Quickpay_Settings {
+class WC_QuickPay_Settings {
 
 	/**
 	* get_fields function.
@@ -243,7 +243,7 @@ class WC_Quickpay_Settings {
                     ),
 				);	
 
-			if( WC_Quickpay_Helper::subscription_is_active() )
+			if( WC_QuickPay_Helper::subscription_is_active() )
 			{			
 				$fields['woocommerce-subscriptions'] = array(
 					'type' => 'title',
