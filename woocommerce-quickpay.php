@@ -4,7 +4,7 @@
 Plugin Name: WooCommerce QuickPay
 Plugin URI: http://wordpress.org/plugins/woocommerce-quickpay/
 Description: Integrates your QuickPay payment getway into your WooCommerce installation.
-Version: 4.2.1
+Version: 4.2.2
 Author: Perfect Solution
 Text Domain: woo-quickpay
 Author URI: http://perfect-solution.dk
@@ -16,7 +16,7 @@ function init_quickpay_gateway() {
 
 	if ( ! class_exists( 'WC_Payment_Gateway' )) { return; }
      
-    define( 'WCQP_VERSION', '4.2.1' );
+    define( 'WCQP_VERSION', '4.2.2' );
 
 	// Import helper classes
     require_once( 'classes/api/woocommerce-quickpay-api.php' );
@@ -135,6 +135,7 @@ function init_quickpay_gateway() {
 		    add_action( 'scheduled_subscription_payment_' . $this->id, array( $this, 'scheduled_subscription_payment' ), 10, 3 );
 		    add_action( 'woocommerce_api_wc_' . $this->id, array( $this, 'callback_handler' ) );    
 		    add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
+            add_action( 'woocommerce_order_status_completed', array( $this, 'woocommerce_order_status_completed' ) );   
                      
 		    add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 2 );
 		    add_action( 'cancelled_subscription_' . $this->id, array( $this, 'subscription_cancellation') )	;
@@ -144,15 +145,17 @@ function init_quickpay_gateway() {
 			    add_action( 'admin_menu', 'WC_QuickPay_Helper::enqueue_stylesheet' );
 			    add_action( 'admin_menu', 'WC_QuickPay_Helper::enqueue_javascript_backend' );
 		    	add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
-		    	add_action( 'woocommerce_order_status_completed', array( $this, 'woocommerce_order_status_completed' ) );   
 		    	add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );	    
 				add_action( 'wp_ajax_quickpay_manual_transaction_actions', array( $this, 'ajax_quickpay_manual_transaction_actions' ) );
 				add_action( 'wp_ajax_quickpay_get_transaction_information', array( $this, 'ajax_quickpay_get_transaction_information' ) );
                 add_action( 'in_plugin_update_message-woocommerce-quickpay/woocommerce-quickpay.php', array( __CLASS__, 'in_plugin_update_message' ) );
 
 		    	add_filter( 'manage_shop_order_posts_custom_column', array( $this, 'apply_custom_order_data' ) );
-		    	add_filter( 'woocommerce_gateway_icon', array( $this, 'apply_gateway_icons' ), 2, 3 );
 			}	
+            
+            
+            add_filter( 'woocommerce_gateway_icon', array( $this, 'apply_gateway_icons' ), 2, 3 );
+
 		}
 
 
@@ -403,7 +406,7 @@ function init_quickpay_gateway() {
             {
 				$post_ids = array( $post->ID );
 			}
-            
+
 			if( ! empty( $post_ids ) ) 
 			{
                 // Loop through all the selected posts/orders
@@ -471,64 +474,70 @@ function init_quickpay_gateway() {
 		public function process_payment( $order_id ) 
 		{
 			global $woocommerce;
-
-			// Instantiate order object
-			$order = new WC_QuickPay_Order( $order_id );
-
-			// Instantiate API Payment object
-            if( ! $order->contains_subscription() )
-            {
-                $api_transaction = new WC_QuickPay_API_Payment();
-            }
-            else 
-            {
-                $api_transaction = new WC_QuickPay_API_Subscription();
-            }
             
+            try {
+                // Instantiate order object
+                $order = new WC_QuickPay_Order( $order_id );
 
-            // Create a new object
-            $payment = new stdClass();
-            // If a payment ID exists, go get it
-            $payment->id = $order->get_payment_id();
-            // Create a payment link
-            $link = new stdClass();
-            // If a payment link exists, go get it
-            $link->url = $order->get_payment_link();
+                // Instantiate API Payment object
+                if( ! $order->contains_subscription() )
+                {
+                    $api_transaction = new WC_QuickPay_API_Payment();
+                }
+                else 
+                {
+                    $api_transaction = new WC_QuickPay_API_Subscription();
+                }
 
 
-            // If the order does not already have a payment ID,
-            // we will create on an attach it to the order
-            // We also check if a payment already exists. If a link exists, we don't
-            // need to create a payment.
-            if( empty($payment->id) && empty($link->url) ) 
-            {
-	            $payment = $api_transaction->create($order);
-	            $order->set_payment_id( $payment->id );
+                // Create a new object
+                $payment = new stdClass();
+                // If a payment ID exists, go get it
+                $payment->id = $order->get_payment_id();
+                // Create a payment link
+                $link = new stdClass();
+                // If a payment link exists, go get it
+                $link->url = $order->get_payment_link();
+
+
+                // If the order does not already have a payment ID,
+                // we will create on an attach it to the order
+                // We also check if a payment already exists. If a link exists, we don't
+                // need to create a payment.
+                if( empty($payment->id) && empty($link->url) ) 
+                {
+                    $payment = $api_transaction->create($order);
+                    $order->set_payment_id( $payment->id );
+                }
+
+
+                // If the order does not already have a payment ID,
+                // we will create on an attach it to the order
+                if( empty($link->url) ) 
+                {
+                    $link = $api_transaction->create_link( $payment->id, $order );
+
+                    if( WC_QuickPay_Helper::is_url($link->url) )
+                    {
+                        $order->set_payment_link( $link->url );
+                    }
+                }
+
+
+                // Validate if the url is valid
+                if( WC_QuickPay_Helper::is_url( $link->url ) ) 
+                {
+                    $woocommerce->cart->empty_cart();
+
+                    return array(
+                        'result' 	=> 'success',
+                        'redirect'	=>  $link->url
+                    );
+                }
             }
-
-           
-            // If the order does not already have a payment ID,
-            // we will create on an attach it to the order
-            if( empty($link->url) ) 
+            catch( Exception $e) 
             {
-	            $link = $api_transaction->create_link( $payment->id, $order );
-
-	            if( WC_QuickPay_Helper::is_url($link->url) )
-	            {
-	            	$order->set_payment_link( $link->url );
-	            }
-            }
-
-            
-            // Validate if the url is valid
-            if( WC_QuickPay_Helper::is_url( $link->url ) ) 
-            {
-            	$woocommerce->cart->empty_cart();
-
-				return array(
-					'result' 	=> 'success',
-					'redirect'	=>  $link->url
-				);
+                $e->write_to_logs();   
             }
 		}
 
@@ -1117,7 +1126,6 @@ function init_quickpay_gateway() {
 		* @return void
 		*/	
 		public function apply_gateway_icons( $icon, $id ) {
-
 			if($id == $this->id) {
 				$icon = '';
 				$icons = $this->s('quickpay_icons');

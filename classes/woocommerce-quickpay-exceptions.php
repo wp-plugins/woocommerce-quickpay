@@ -8,7 +8,13 @@ class QuickPay_Exception extends Exception
 	 */
 	protected $log;
 
-
+  	/**
+	 * Contains the curl object instance
+	 * @access protected
+	 */  
+    protected $curl_request_data;
+    
+    
   	/**
 	* __Construct function.
 	* 
@@ -17,11 +23,13 @@ class QuickPay_Exception extends Exception
 	* @access public
 	* @return void
 	*/ 
-    public function __construct($message, $code = 0, Exception $previous = null) {
+    public function __construct($message, $code = 0, Exception $previous = null, $curl_request_data = '') {
         // make sure everything is assigned properly
         parent::__construct($message, $code, $previous);
 
         $this->log = new WC_QuickPay_Log();
+        
+        $this->curl_request_data = $curl_request_data;
     }
 
 
@@ -82,7 +90,13 @@ class QuickPay_API_Exception extends QuickPay_Exception
 		$this->log->add( 'QuickPay API Exception line: ' . $this->getLine() );
 		$this->log->add( 'QuickPay API Exception code: ' . $this->getCode() );
 		$this->log->add( 'QuickPay API Exception message: ' . $this->getMessage() );
+        
+        if( ! empty($this->curl_request_data)) {
+            $this->log->add( 'QuickPay API Exception Request: ' . $this->curl_request_data);
+        }
+        
 		$this->log->separator();
+        
 	}
 }
 ?>

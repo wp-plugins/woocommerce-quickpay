@@ -146,11 +146,18 @@ class WC_QuickPay_API
  	{
  		// Set the HTTP request type
  		curl_setopt( $this->ch, CURLOPT_CUSTOMREQUEST, $request_type );
-
+        
+        // Prepare empty variable passed to any exception thrown
+        $request_form_data = '';
+        
  		// If additional data is delivered, we will send it along with the API request
  		if( is_array( $form ) && ! empty( $form ) )
  		{
- 			curl_setopt( $this->ch, CURLOPT_POSTFIELDS, http_build_query($form) );
+            // Build a string query based on the form array values
+            $request_form_data = http_build_query( $form, '', '&' );
+            
+            // Prepare to post the data string
+ 			curl_setopt( $this->ch, CURLOPT_POSTFIELDS, $request_form_data );
  		}
 
  		// Execute the request and decode the response to JSON
@@ -176,15 +183,15 @@ class WC_QuickPay_API
                     }
                 }
                 
-                throw new QuickPay_API_Exception( $error_messages, $response_code );
+                throw new QuickPay_API_Exception( $error_messages, $response_code, NULL, $request_form_data );
             }
             else if( isset( $this->resource_data->message) ) 
             {
-                throw new QuickPay_API_Exception( $this->resource_data->message, $response_code ); 
+                throw new QuickPay_API_Exception( $this->resource_data->message, $response_code, NULL, $request_form_data ); 
             }
             else 
             {
-                throw new QuickPay_API_Exception( (string) $this->resource_data, $response_code );
+                throw new QuickPay_API_Exception( (string) json_encode($this->resource_data), $response_code, NULL, $request_form_data );
             }
  			
  		}

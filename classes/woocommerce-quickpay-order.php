@@ -374,7 +374,7 @@ class WC_QuickPay_Order extends WC_Order {
 	*/	
 	public function get_custom_variables() 
     {
-        $custom_vars_settings = WC_QP()->s('quickpay_custom_variables');
+        $custom_vars_settings = (array) WC_QP()->s('quickpay_custom_variables');
         $custom_vars = array();
 
         // Complete Billing Address Details

@@ -3,8 +3,8 @@ Contributors: PerfectSolution
 Donate link: http://perfect-solution.dk/donation
 Tags: gateway, woo commerce, quickpay, quick pay, gateway, integration, woocommerce, woocommerce quickpay, payment, payment gateway
 Requires at least: 4.0.0
-Tested up to: 4.2.2
-Stable tag: 4.2.1
+Tested up to: 4.2.4
+Stable tag: 4.2.2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,6 +22,15 @@ With WooCommerce QuickPay, you are able to integrate your QuickPay gateway to yo
 6. You are good to go.
 
 == Changelog ==
+
+= 4.2.2 =
+* Fix: Payment icons not working in WooCommerce 2.4.
+* Fix: JSON encode and typecast error objects in case no specific error message is set from QuickPay
+* Fix: Add additional params to http_build_query to support server setups requirering param 2+3 to work properly
+* Fix: Remove obosolete quickpay_paybuttontext setting from instances
+* Tweak: Move woocommerce_order_complete hook outside is_admin check
+* Tweak: Add post data params to API exceptions
+* Tweak: Wrap process payment in try/catch and write any errors to WC system logs.
 
 = 4.2.1 = 
 * Reintroduce merchant ID for support usability

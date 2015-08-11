@@ -54,12 +54,6 @@ class WC_QuickPay_ViaBill extends WC_QuickPay_Instance {
                     'description' => __( 'This controls the description which the user sees during checkout.', 'woo-quickpay' ), 
                     'default' => __('Pay with ViaBill', 'woo-quickpay')
                 ),
-                'quickpay_paybuttontext' => array(
-                    'title' => __( 'Text on payment button', 'woo-quickpay' ), 
-                    'type' => 'text', 
-                    'description' => __( 'This text will show on the button which opens the QuickPay window.', 'woo-quickpay' ), 
-                    'default' => __( 'Open secure QuickPay window.', 'woo-quickpay' )
-                ),
         );
     }
    
